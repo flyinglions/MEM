@@ -1,5 +1,7 @@
 package org.flying.lions;
 
+import java.io.IOException;
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -24,7 +26,12 @@ public class SMSReceiver extends BroadcastReceiver
 		for (Object pdu : pdus)
 		{
 			SmsMessage msg = SmsMessage.createFromPdu((byte[]) pdu);
-			SMSReceiverPlugin.sendMessage(msg);
+			try {
+				SMSReceiverPlugin.sendMessage(msg);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			Log.v(TAG, msg.getMessageBody());
 		}
 	}

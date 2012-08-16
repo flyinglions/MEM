@@ -31,15 +31,13 @@ public class RuleBuilder {
      */
     public void ruleParser(){
         ruleReaders.iniRules();
+        
         String[] readedHolder = ruleReaders.getTokenedRules();
         ruleLeng = readedHolder.length;
         ruleList = new Rule[ruleLeng];
 
         this.parseValues(ruleLeng, readedHolder);
         this.buildRuleList(readedHolder);
-
-        //System.out.println("Rules Parsed");
-        this.printRuleSet();
     }
 
     private void parseValues(int ruleLeng, String[] readedHolder) {
@@ -67,16 +65,21 @@ public class RuleBuilder {
         }
     }
 
-    public void printRuleSet() {
+    public String printRuleSet() {
         StringBuilder returnString = new StringBuilder();
         for (int y = 0; y < ruleList.length; y++) {
             returnString.append(" ").append(ruleList[y]);
         }
-        //System.out.println(returnString.toString());
+       return returnString.toString();
     }
+    
+    @Override
+    public String toString(){
+      return this.printRuleSet();  
+    }    
 
     private void buildRuleList(String[] readedHolder) {
-        for (int y = 0; y < valueArray.length; y++) {
+    	for (int y = 0; y < valueArray.length; y++) {
             if (readedHolder[y].contains("*")) {
                 ruleList[y] = new Rule(1);
 
@@ -100,5 +103,4 @@ public class RuleBuilder {
 
         }
     }
-
 }

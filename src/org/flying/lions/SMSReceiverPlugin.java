@@ -1,6 +1,7 @@
 package org.flying.lions;
 
 import java.io.FileWriter;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -75,8 +76,9 @@ public class SMSReceiverPlugin extends Plugin {
 	/**
 	 * Static function to send a SMS to JS.
 	 * @param sms
+	 * @throws IOException 
 	 */
-	public static void sendMessage(final SmsMessage msg)
+	public static void sendMessage(final SmsMessage msg) throws IOException
 	{
 			Log.d(TAG, "sendMessage Called");
 			// build JSON message
@@ -134,12 +136,12 @@ public class SMSReceiverPlugin extends Plugin {
 		 	   	Log.v(TAG + ":sendJavascript", code);
 	
 		 	   	// execute code
-		 	   	currentPluginInstance.sendJavascript(code);
+		 	   	//currentPluginInstance.sendJavascript(code);
 		 	   	currentPluginInstance.sendJavascript("javascript:notificationCallback()");
 			}
 			else
 			{
-				try
+				/*try
 				{
 					if(!sms.getString("bank").equals("NOT BANK SMS"))
 					{
@@ -158,7 +160,7 @@ public class SMSReceiverPlugin extends Plugin {
 				catch (JSONException e)
 				{
 			 	   	Log.e(TAG + ":sendMessage", "JSON exception");
-				}
+				}*/
 			}
 		
 	}

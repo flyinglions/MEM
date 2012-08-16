@@ -18,11 +18,11 @@ public class Rule {
      * 6 - Token is from end of  last" till ' ' := <"R"Value,,>     * 
      */
     public String doRule(String getToken, int Start) {
-        playString = new String(getToken);
+        playString = getToken;
         playString = this.removeTo(Start);
-        //System.out.println(playString + "::" + Start + "\n");
+
         if (ruleNumber == 0) {
-            //System.out.append("Init Rule");
+            System.out.append("Init Rule");
             return "";
         }
         switch (ruleNumber) {
@@ -82,6 +82,7 @@ public class Rule {
         return returnString;
     }
 
+    /*Handle net 2 R`e op `n slag - wat kan ek beter doen?*/
     private String getFromHashToBreak() {
         String returnString = "";
         int breakFirst = playString.indexOf("R-") + 1;
@@ -107,16 +108,28 @@ public class Rule {
         } else {
             SMSHandler.setStart(breakLast);
         }
-        //      System.out.println(playString + ": " + breakLast);
-
         returnString = playString.substring(breakFirst, breakLast);
+        
+
+        try{
+            Float.valueOf(returnString);       
+        }catch(Exception e){
+            if("".endsWith(returnString)){SMSHandler.setValid(false);
+            }
+            else{
+                playString = playString.substring(breakLast + 1).trim();
+                breakLast = playString.indexOf(" ") - 1;
+                SMSHandler.setStart(breakLast);
+                returnString = playString.substring(1, breakLast); 
+            }
+        }
 
         return returnString;
     }
 
     private String getFromHashToPoint() {
         String returnString = "";
-        //System.out.println(playString);
+
         int breakFirst = playString.indexOf("R") + 1;
         int breakLast = playString.indexOf(".") + 3;
         if (breakFirst < 0) {
@@ -144,5 +157,5 @@ public class Rule {
         }
         return toTrim;
     }
-
 }
+

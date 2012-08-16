@@ -4,12 +4,6 @@ var isPhoneGapReady = false;
 //global var to check if app is runned for first time: few events should run then
 var firstRun = true;
 
-//Phone types
-var isAndroid = false;
-var isBlackberry = false;
-
-//Device's uuid
-var deviceUUID;
 
 function init()
 {
@@ -30,40 +24,14 @@ function onDeviceReady()
 	
 	isFirstRun = true;
 	
-	//Get device UUID
-	deviceUUID = device.uuid;
-	
-	//Detect device's platform
-	deviceDetection();
-	
 	//Any startup events
 	executeStartupEvents();
 	
-	//Any events that needs to run if app is opened for first time
-	//executeFirstRunEvents();
-	
-	
-	
-}
-
-function deviceDetection()
-{
-	if(isPhoneGapReady)
-		{
-			switch(device.platform)
-			{
-				case "Android":
-					isAndroid = true;
-					break;
-				case "Blackberry":
-					isBlacberry = true;
-					break;
-			}
-		
-		
-		}
 
 }
+
+window.onload = init;
+
 
 function executeStartupEvents(){
 	if(isPhoneGapReady)
@@ -108,61 +76,9 @@ function executeStartupEvents(){
 				} 				
 				
 			   
-			   /*btnList.onclick = function() {
-				   window.plugins.SMSReader.getInbox("",
-					function(data){
-					      
-					      var text = getSMSData(data);
-					      console.log(text);
-					      document.getElementById("inbox").innerHTML = text;
-					      
-					      
-					},
-					function(e){
-						console.log(e);
-					});
-			    }
-			   
-			  
-			   
-			   btnList.disabled=false;	*/
-			
-			
+		
 		}
 
-}
-
-function executeFirstRunEvents(){
-	
-	if(firstRun){
-   	navigator.notification.confirm(
-		    'Do you want to import inbox?',  // message
-		    onImportConfirm,         // callback
-		    'First RUN: Import inbox',            // title
-		    'Yes, Cancel'                  // buttons
-			);
-			
-			function onImportConfirm(buttonIndex) {
-			    //alert('You selected button ' + buttonIndex);
-				if(buttonIndex == '1'){
-					   window.plugins.SMSReader.getInbox("",
-								function(data){
-								      var text = getSMSData(data);
-								      console.log(text);
-								      document.getElementById("inbox").innerHTML = text;
-								      
-								},
-								function(e){
-									console.log(e);
-								});
-				}
-				
-			}	
-			
-			firstRun = false;
-			
-	}
-	
 }
 
 function notificationCallback(){
@@ -178,4 +94,4 @@ function notificationCallback(){
 	window.plugins.SMSReceiverPlugin.unregister(null, null); 
 }*/
 
-window.onload = init;
+

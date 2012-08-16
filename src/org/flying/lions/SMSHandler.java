@@ -12,30 +12,48 @@ public class SMSHandler {
 	
 	private static final String TAG = "SMSHandler";
 	
-	private RuleBuilder ruleBuild = new RuleBuilder();
+    private RuleBuilder ruleBuild = new RuleBuilder();
     private static int currentLocation = 0;
     private Rule[] ruleList = null;
     private String[] valueArray = null;
     private String[] realValue = null;
     private int messageSize = 0;
     private String smsString = "";
+    private static boolean isValid = true;
+    private SQLGenerator SQLGen = new SQLGenerator();
 
-    public void recieveSMS(String inSms){
-        //System.out.println(messageSize);
-    	
-    	currentLocation = 0;
+    public void recieveSMS(String inSms) throws IOException{
         smsString = inSms;
         ruleBuild.ruleParser();
         messageSize = ruleBuild.getRuleLeng();
         ruleList = ruleBuild.getRuleList();
         valueArray = ruleBuild.getValueArray();
-        realValue = new String[messageSize];
+        realValue = new String[messageSize];        
 
         for (int y = 0; y < messageSize; y++) {
-            this.parseSMS(y);
+            try{
+                if(isValid)
+                    this.parseSMS(y);
+                else{
+               System.err.println("SMS is not valid: '" + inSms +"'"); 
+               currentLocation = 0; 
+               isValid = true;
+               return;
+                }
+                
+            }catch(Exception e){
+               System.err.println("SMS is not valid: '" + inSms +"'"); 
+               currentLocation = 0; 
+               isValid = true;
+               return;
+            }
         }
+       
+        System.out.println("\n\n" + this);
+        SQLGen.buildSQL(realValue);
+        currentLocation = 0;
+        isValid = true;
 
-        //System.out.println("\n\n" + this);
     }
 
     private void parseSMS(int where) {
@@ -46,17 +64,20 @@ public class SMSHandler {
         start += 1;
         currentLocation += start;
     }
+    
+    public static void setValid(boolean toChange){
+        isValid = toChange;
+    }    
 
     @Override
     public String toString() {
         StringBuilder returnString = new StringBuilder();
 
         for (int y = 0; y < messageSize; y++) {
-            
-            returnString.append(realValue[y]).append(" -- ").append(valueArray[y]).append("\n");
+            returnString.append(y).append(": ").append(realValue[y]).append(" -- ").append(valueArray[y]).append("\n");
         }
         return returnString.toString();
-    }
+    }  
     
     public JSONObject storeJSONObject(){
     	//StringBuilder returnString = new StringBuilder();
