@@ -59,8 +59,9 @@
       }
 	
 	function setMonthsForBudgetingGraph() {
-	var 
-		  if (INIset("budget_graph","months",months)) {
+		var months = document.getElementById("slider-0").value;
+		alert(months);
+		INIset("budget_graph","months",months);
 	}
 	
 
@@ -77,10 +78,11 @@
                 <input class="button" type="button" value="Back" onclick="redirect('index.html');"/><br />
 		
 		
-		<input class="button" type="button" value="Set amount of month to show" onclick="setMonthsForBudgetingGraph() ;"/><br />
+		
 		<form>
 		   <label for="slider-0">Input slider:</label>
 		   <input type="range" name="slider" id="slider-0" value="6" min="1" max="12"  />
+		   <input class="button" type="button" value="Set amount of month to show" onclick="setMonthsForBudgetingGraph() ;"/><br />
 		</form>
 		
 		
