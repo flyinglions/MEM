@@ -50,7 +50,8 @@
             // Cordova is ready
             //
             function onDeviceReady() {
-                var db = window.openDatabase("Database", "1.0", "Flying Lions Database", 10485760);
+                db = window.openDatabase("Database", "1.0", "Flying Lions Database", 10485760);
+                alert("working");
                 db.transaction(insertDB, errorCB, successCB);
             }
             
