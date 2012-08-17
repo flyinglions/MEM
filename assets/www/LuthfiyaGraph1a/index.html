@@ -21,21 +21,22 @@
             /*var Gategories = ["Food", "Clothing", "Health", "Travel", "Entertainment", "Financial", "Services", "Living Expenses"];
             var Spent = [2350,650,200,1800,520,450,2500,3620];
             var Budgeted = [4000,1500,1000,3000,1000,1000,3000,5000];*/
+            document.addEventListener("deviceready", onDeviceReady, false);
 
             // Query the database
             //
             function queryDB(tx) {
-                tx.executeSql('SELECT * FROM DEMO', [], querySuccess, errorCB);
+                tx.executeSql('SELECT * FROM Budget_Items', [], querySuccess, errorCB);
             }
 
             // Query the success callback
             //
             function querySuccess(tx, results) {
                 var len = results.rows.length;
-                console.log("DEMO table: " + len + " rows found.");
-                for (var i=0; i<len; i++){
+                alert("DEMO table: " + len + " rows found.");
+                /*for (var i=0; i<len; i++){
                     console.log("Row = " + i + " ID = " + results.rows.item(i).id + " Data =  " + results.rows.item(i).data);
-                }
+                }*/
             }
 
             // Transaction error callback
