@@ -31,7 +31,17 @@
             // Query the database
             //
             function queryDB(tx) {
+                tx.executeSql('SELECT * FROM Bank_Account', [], bank_accountSuccess, errorCB);
                 tx.executeSql('SELECT * FROM Budget_Items', [], querySuccess, errorCB);
+            }
+            
+            function bank_accountSuccess(tx, results)
+            {
+                var len = results.rows.length;
+                for (var i=0; i<len; i++)
+                {
+                    $("div h3").text(results.rows.item(i).Account_Name+ " " + results.rows.item(i).Bank + " : "+ results.rows.item(i).Account_Number);
+                }
             }
 
             // Query the success callback
@@ -39,7 +49,6 @@
             function querySuccess(tx, results) {
                 var len = results.rows.length;
                 for (var i=0; i<len; i++){
-                    alert(results.rows.item(i).Category);
                     Gategories[i] = results.rows.item(i).Category;
                     Spent[i] = results.rows.item(i).Remaining_Amount;
                     Budgeted[i] = results.rows.item(i).Budgeted_Amount;
@@ -265,7 +274,7 @@
                 <h1>Expenses per Category</h1>
             </div>
             <div data-role="content" data-theme="a">
-                <h3>Petrus van der Walt ABSA Account : 1258946859</h3>
+                <h3>Loading data...</h3>
                 <div id="chart" style="height:300px; width:300px;"></div>
             </div>
     </div>
