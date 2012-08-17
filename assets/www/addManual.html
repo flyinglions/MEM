@@ -111,7 +111,12 @@ INSERT INTO Bank_Account(Account_Number, Bank, Account_Name, Balance_Available) 
     sql = "";
 
     function insertDB(tx) {
-        tx.executeSql(sql);
+        var arr = sql.split(";");
+        for(var i = 0 ; i < arr.length-1; i++)
+        {
+            tx.executeSql(arr[i]);
+        }
+        //
     }
 
     // Query the success callback
