@@ -49,6 +49,11 @@
             function querySuccess(tx, results) {
                 var len = results.rows.length;
                 for (var i=0; i<len; i++){
+                    var found = false;
+                    for(var i = 0 ; i < Gategories.length; i++)
+                    {
+                        
+                    }
                     Gategories[i] = results.rows.item(i).Category;
                     Spent[i] = results.rows.item(i).Remaining_Amount;
                     Budgeted[i] = results.rows.item(i).Budgeted_Amount;
