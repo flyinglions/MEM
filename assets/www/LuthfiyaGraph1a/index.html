@@ -29,7 +29,7 @@
             var Budgeted = [4000,1500,1000,3000];
 
             // Query the database
-            //
+            ///
             function queryDB(tx) {
                 tx.executeSql('SELECT * FROM Bank_Account', [], bank_accountSuccess, errorCB);
                 tx.executeSql('SELECT * FROM Budget_Items', [], querySuccess, errorCB);
@@ -38,9 +38,11 @@
             function bank_accountSuccess(tx, results)
             {
                 var len = results.rows.length;
+                alert(len);
                 for (var i=0; i<len; i++)
                 {
-                    $("div h3").text(results.rows.item(i).Account_Name+ " " + results.rows.item(i).Bank + " : "+ results.rows.item(i).Account_Number);
+                    alert(results.rows.item(i).Acc_Name);
+                    $("div h3").text(results.rows.item(i).Acc_Name+ " " + results.rows.item(i).Bank + " : "+ results.rows.item(i).Account_Num);
                 }
             }
 
@@ -52,11 +54,11 @@
                     var found = false;
                     for(var i = 0 ; i < Gategories.length; i++)
                     {
-                        
+                        Gategories[i] = results.rows.item(i).Category;
+                        Spent[i] = results.rows.item(i).Budget_Amount - results.rows.item(i).Remaining;
+                        Budgeted[i] = results.rows.item(i).Budget_Amount;
                     }
-                    Gategories[i] = results.rows.item(i).Category;
-                    Spent[i] = results.rows.item(i).Remaining_Amount;
-                    Budgeted[i] = results.rows.item(i).Budgeted_Amount;
+                    
                 }
                 
                 plot1 = $.jqplot("chart", [Spent,Budgeted], {
@@ -155,7 +157,7 @@
                 series:[
                     {
                     label:'Spent',
-                    color: '#FF0000',
+                    color: '#0000FF',
                     renderer:$.jqplot.BarRenderer,
                     rendererOptions: {
                         animation: {
@@ -216,7 +218,7 @@
                 },
                 legend: {
                     show: true,
-                    //location: 'sw',
+                    location: 'sw',
                     placement: 'outside'
                 },
                 seriesDefaults: {

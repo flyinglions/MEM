@@ -62,9 +62,10 @@
     {        
         var length = functionQueue.getLength();
         
+        
         for(var i=0; i < length; i++)
         {
-            //alert();
+            
             var type = typeQueue.dequeue();
             if(type == "SELECT")
             {
@@ -74,6 +75,9 @@
             {
                 tx.executeSql(functionQueue.dequeue());
             }
+            
+            type = typeQueue.dequeue();
+            functionQueue.dequeue();
         }
         
         global_trans = tx;
@@ -117,7 +121,7 @@
         */
         
         //Create Table Bank_Account
-        functionQueue.enqueue('CREATE TABLE IF NOT EXISTS Bank_Account (Account_Number UNIQUE, Bank, Acc_Name, Balance)');
+        functionQueue.enqueue('CREATE TABLE IF NOT EXISTS Bank_Account (Account_Num UNIQUE, Bank, Acc_Name, Balance)');
         typeQueue.enqueue('CREATE');
         //Create Table Budget_Items
         functionQueue.enqueue('CREATE TABLE IF NOT EXISTS Budget_Items (Category UNIQUE,Budget_Amount,Remaining)');
