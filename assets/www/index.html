@@ -99,7 +99,7 @@
     {
         db = window.openDatabase("Database", "1.0", "Flying Lions Database", 10485760);
         
-        /*functionQueue.enqueue('DROP TABLE Bank_Account');
+        functionQueue.enqueue('DROP TABLE Bank_Account');
         typeQueue.enqueue('DROP');
         
         functionQueue.enqueue('DROP TABLE Budget_Items');
@@ -112,8 +112,8 @@
         typeQueue.enqueue('DROP');
         
         functionQueue.enqueue('DROP TABLE Reconciliation');
-        typeQueue.enqueue('DROP');*/
-        
+        typeQueue.enqueue('DROP');
+        /*
         //Create Table Bank_Account
         functionQueue.enqueue('CREATE TABLE IF NOT EXISTS Bank_Account (Account_Number UNIQUE, Bank, Account_Name, Balance_Available, User_ID)');
         typeQueue.enqueue('CREATE');
@@ -129,7 +129,7 @@
         //Create Table Reconciliation
         functionQueue.enqueue('CREATE TABLE IF NOT EXISTS Reconciliation (Transaction_ID,Category,Type,Recon,Account_Number,SMS_ID)');
         typeQueue.enqueue('CREATE');
-        
+        */
         checkQueue();
     }
     
