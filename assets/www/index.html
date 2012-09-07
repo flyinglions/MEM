@@ -11,10 +11,10 @@
         <script src="./theme/Wikus/jquery-1.7.1.min.js"></script>
         <script src="./theme/Wikus/jquery.mobile-1.1.0.min.js"></script>
         <script type="text/javascript" charset="utf-8" src="cordova-1.9.0.js"></script>
-		<script type="text/javascript" charset="utf-8" src="smsread.js"></script>
-		<script type="text/javascript" charset="utf-8" src="SMSReceiverPlugin.js"></script>
-		<script type="text/javascript" charset="utf-8" src="common.js"></script>
-		<script type="text/javascript" charset="utf-8" src="statusbarnotification.js"></script>  
+            <script type="text/javascript" charset="utf-8" src="smsread.js"></script>
+            <script type="text/javascript" charset="utf-8" src="SMSReceiverPlugin.js"></script>
+            <script type="text/javascript" charset="utf-8" src="common.js"></script>
+            <script type="text/javascript" charset="utf-8" src="statusbarnotification.js"></script>
         
         
 
@@ -46,112 +46,99 @@
         });
 
         </script>		
-        <script type="text/javascript" src="./javascript/Queue.compressed.js"></script>
+    <script type="text/javascript" src="./javascript/Queue.compressed.js"></script>
     <script type="text/javascript">
-
-    // Wait for Cordova to load
-    //
-    document.addEventListener("deviceready", onDeviceReady, false);
-    
-    var db = null;
-    var functionQueue = new Queue();
-    var typeQueue = new Queue();
-
-    // Create the database, if not exist
-    function queryDB(tx)
-    {        
-        var length = functionQueue.getLength();
+        document.addEventListener("deviceready", onWikusDeviceReady, false);
         
+        var db = null;
+        var functionQueue = new Queue();
+        var typeQueue = new Queue();
         
-        for(var i=0; i < length; i++)
+        function onWikusDeviceReady()
         {
+            db = window.openDatabase("Database", "1.0", "Flying Lions Database", 10485760);
+            //alert("ready");
             
-            var type = typeQueue.dequeue();
-            if(type == "SELECT")
-            {
-                tx.executeSql(functionQueue.dequeue(), [], querySuccess, error);
-            }
-            else
-            {
-                tx.executeSql(functionQueue.dequeue());
-            }
+            //dropTables();
             
-            type = typeQueue.dequeue();
-            functionQueue.dequeue();
+            createIfNotExistTables();
+            
+            checkQueue();
         }
         
-        global_trans = tx;
-    }
-
-    // Query the database
-
-
-    // Transaction error callback
-    function error(err) 
-    {
-        console.log("Error processing SQL: "+err.code);
-    }
-
-    // Transaction success callback
-    function success() 
-    {
-        console.log("success on database transaction.");
-    }
-
-    // Cordova is ready
-    function onDeviceReady() 
-    {
-        db = window.openDatabase("Database", "1.0", "Flying Lions Database", 10485760);
-        
-        /*
-        functionQueue.enqueue('DROP IF EXISTS TABLE Bank_Account');
-        typeQueue.enqueue('DROP');
-        
-        functionQueue.enqueue('DROP IF EXISTS TABLE Budget_Items');
-        typeQueue.enqueue('DROP');
-        
-        //functionQueue.enqueue('DROP TABLE User');
-        //typeQueue.enqueue('DROP');
-        
-        functionQueue.enqueue('DROP IF EXISTS TABLE sms');
-        typeQueue.enqueue('DROP');
-        
-        functionQueue.enqueue('DROP IF EXISTS TABLE Recon');
-        typeQueue.enqueue('DROP');
-        */
-        
-        //Create Table Bank_Account
-        functionQueue.enqueue('CREATE TABLE IF NOT EXISTS Bank_Account (Account_Num UNIQUE, Bank, Acc_Name, Balance)');
-        typeQueue.enqueue('CREATE');
-        //Create Table Budget_Items
-        functionQueue.enqueue('CREATE TABLE IF NOT EXISTS Budget_Items (Category UNIQUE,Budget_Amount,Remaining)');
-        typeQueue.enqueue('CREATE');
-        //Create Table sms
-        functionQueue.enqueue('CREATE TABLE IF NOT EXISTS sms (SMS_ID,Date,Time,Amount,Balance,Category,Account_Num)');
-        typeQueue.enqueue('CREATE');
-        //Create Table Reconciliation
-        functionQueue.enqueue('CREATE TABLE IF NOT EXISTS Reconciliation (Transaction_ID,Type,Recon,Account_Num,SMS_ID)');
-        typeQueue.enqueue('CREATE');
-        
-        checkQueue();
-    }
-    
-    function querySuccess(tx, results) 
-    {
-        var len = results.rows.length;
-        //console.log("DEMO table: " + len + " rows found.");
-        for (var i=0; i<len; i++)
+        function createIfNotExistTables()
         {
-            alert(results.rows.item(i).User_Name);
-            //console.log("Row = " + i + " ID = " + results.rows.item(i).id + " Data =  " + results.rows.item(i).data);
+            functionQueue.enqueue('CREATE TABLE IF NOT EXISTS Bank_Account (Account_Num UNIQUE, Bank, Acc_Name, Balance)');
+            typeQueue.enqueue('CREATE');
+            
+            functionQueue.enqueue('CREATE TABLE IF NOT EXISTS Budget_Items (Category UNIQUE,Budget_Amount,Remaining)');
+            typeQueue.enqueue('CREATE');
+            
+            functionQueue.enqueue('CREATE TABLE IF NOT EXISTS sms (SMS_ID,Date,Time,Amount,Balance,Category,Account_Num)');
+            typeQueue.enqueue('CREATE');
+            
+            functionQueue.enqueue('CREATE TABLE IF NOT EXISTS Reconciliation (Transaction_ID,Type,Recon,Account_Num,SMS_ID)');
+            typeQueue.enqueue('CREATE');
         }
-    }
-    
-    function checkQueue()
-    {
-        db.transaction(queryDB, error, success);
-    }
+        
+        function dropTables()
+        {
+            functionQueue.enqueue('DROP TABLE IF EXISTS Bank_Account');
+            typeQueue.enqueue('DROP');
+            
+            functionQueue.enqueue('DROP TABLE IF EXISTS Budget_Items');
+            typeQueue.enqueue('DROP');
+            
+            functionQueue.enqueue('DROP TABLE IF EXISTS sms');
+            typeQueue.enqueue('DROP');
+            
+            functionQueue.enqueue('DROP TABLE IF EXISTS Recon');
+            typeQueue.enqueue('DROP');
+        }
+        
+        function checkQueue()
+        {
+            db.transaction(queryDB, error, success);
+        }
+        
+        function queryDB(tx)
+        {        
+            var length = functionQueue.getLength();
 
+            //alert("length of Queue:"+length);
+            for(var i=0; i < length; i++)
+            {
+
+                var type = typeQueue.dequeue();
+                var sqlVal = functionQueue.dequeue();
+                //alert(type);
+                //alert(sqlVal);
+                if(type == 'DROP')
+                {
+                    //alert('Drop occured');
+                    tx.executeSql(sqlVal);
+                }
+                if(type == 'CREATE')
+                {
+                    //alert('Create occured');
+                    tx.executeSql(sqlVal);
+                }
+            }
+
+            global_trans = tx;
+        }
+        
+        // Transaction error callback
+        function error(err) 
+        {
+            console.log("Error processing SQL: "+err.code);
+        }
+
+        // Transaction success callback
+        function success() 
+        {
+            console.log("success on database transaction.");
+        }
     </script>
 </head>
 <body onload="init()">

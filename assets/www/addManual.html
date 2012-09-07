@@ -104,7 +104,7 @@
                 INSERT INTO Reconciliation (Category,Type,Recon,Account_Number) values('','Expense',0.00);INSERT INTO Reconciliation (Category,Type,Recon,Account_Number) values('','Income',0.00);INSERT INTO Reconciliation (Category,Type,Recon,Account_Number) values('Food','Expense',2.65);INSERT INTO Reconciliation (Category,Type,Recon,Account_Number) values('','Expense',4.95);INSERT INTO Reconciliation (Category,Type,Recon,Account_Number) values('','Expense',7.15);INSERT INTO Reconciliation (Category,Type,Recon,Account_Number) values('','Income',29.10);INSERT INTO Reconciliation (Category,Type,Recon,Account_Number) values('','Expense',2.65);INSERT INTO Reconciliation (Category,Type,Recon,Account_Number) values('','Expense',13.65);INSERT INTO Reconciliation (Category,Type,Recon,Account_Number) values('','Expense',49.55);
                 
                 -->
-                <input class="input" type="text" value=""/><br />
+                <input class="input" type="text" value="INSERT INTO sms(Date,Time,Amount,Balance,Category,Account_Num) values('2012/06/20', '16:11',900.00,1671.33,'Spar','TJK 496');INSERT INTO sms(Date,Time,Amount,Balance,Category,Account_Num) values('2012/06/28', '06:18',2954.26,4625.59,'PUNIV SAL UNIV VAN PRETORIA','TJK 496');INSERT INTO sms(Date,Time,Amount,Balance,Category,Account_Num) values('2012/06/29', '15:55',163.19,4459.75,'SPAR ZAMBESI','TJK 496');INSERT INTO sms(Date,Time,Amount,Balance,Category,Account_Num) values('2012/06/29', '17:52',100.00,4354.80,'SPAR ZAMBESI','TJK 496');INSERT INTO sms(Date,Time,Amount,Balance,Category,Account_Num) values('2012/06/29', '22:16',253.90,4093.75,'SPAR ZAMBESI','TJK 496');INSERT INTO sms(Date,Time,Amount,Balance,Category,Account_Num) values('2012/07/01', '19:00',400.00,4464.65,'ABSA BANK sakgeld','TJK 496');INSERT INTO sms(Date,Time,Amount,Balance,Category,Account_Num) values('2012/07/02', '14:51',255.00,4207.00,'SPAR ZAMBESI','TJK 496');INSERT INTO sms(Date,Time,Amount,Balance,Category,Account_Num) values('2012/07/03', '14:36',385.90,3807.45,'BUILDERS WAR','TJK 496');INSERT INTO sms(Date,Time,Amount,Balance,Category,Account_Num) values('2012/07/04', '18:08',100.00,3657.90,'SPAR ZAMBESI','TJK 496');"/><br />
                 <input class="button" type="button" value="Add" onclick="addData();"/><br />
                 <input class="button" type="button" value="Back" onclick="redirect('index.html')"/><br />
                 <div id="loading" style="display: inline" class="ui-loader ui-corner-all ui-body-a ui-loader-verbose">
@@ -138,7 +138,7 @@
         for (var i=0; i<len; i++){
             console.log("Row = " + i + " ID = " + results.rows.item(i).id + " Data =  " + results.rows.item(i).data);
         }*/
-        alert("Insert successful");
+        alert("Query success");
     }
 
     // Transaction error callback

@@ -24,9 +24,9 @@
             var Budgeted = [4000,1500,1000,3000,1000,1000,3000,5000];*/
             document.addEventListener("deviceready", onDeviceReady, false);
 
-            var Gategories = ["Travel", "Clothing", "Health", "Food"];
-            var Spent = [2350,650,200,1800];
-            var Budgeted = [4000,1500,1000,3000];
+            var Gategories = new Array();
+            var Spent = new Array();
+            var Budgeted = new Array();
 
             // Query the database
             ///
@@ -38,10 +38,8 @@
             function bank_accountSuccess(tx, results)
             {
                 var len = results.rows.length;
-                alert(len);
                 for (var i=0; i<len; i++)
                 {
-                    alert(results.rows.item(i).Acc_Name);
                     $("div h3").text(results.rows.item(i).Acc_Name+ " " + results.rows.item(i).Bank + " : "+ results.rows.item(i).Account_Num);
                 }
             }
@@ -50,16 +48,16 @@
             //
             function querySuccess(tx, results) {
                 var len = results.rows.length;
-                for (var i=0; i<len; i++){
-                    var found = false;
-                    for(var i = 0 ; i < Gategories.length; i++)
-                    {
-                        Gategories[i] = results.rows.item(i).Category;
-                        Spent[i] = results.rows.item(i).Budget_Amount - results.rows.item(i).Remaining;
-                        Budgeted[i] = results.rows.item(i).Budget_Amount;
-                    }
-                    
+                alert(len);
+                
+                for (var i=0; i<len; i++)
+                {
+                    Gategories.push(results.rows.item(i).Category);
+                    Spent.push(results.rows.item(i).Budget_Amount - results.rows.item(i).Remaining);
+                    Budgeted.push(results.rows.item(i).Budget_Amount);
                 }
+                
+               
                 
                 plot1 = $.jqplot("chart", [Spent,Budgeted], {
                 title: 'Expenses per Category',
@@ -227,11 +225,13 @@
                     }
                 }
                 });
+                
             }
 
             // Transaction error callback
             //
-            function errorCB(err) {
+            function errorCB(err) 
+            {
                 alert("Error processing SQL: "+err.code);
             }
 
