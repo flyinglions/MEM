@@ -25,33 +25,39 @@
         <h1>Income and Expenses</h1>
       </div>
       <div data-role="content" data-theme="a">
-        <h3>ABSA Account ABCsample12345</h3>
+        <h3>Bank Account</h3>
         <div id="chart1" style="height:300px; width:300px;"></div>
         <script class="code" type="text/javascript">
               
              document.addEventListener("deviceready", onDeviceReady, false);
             //var expenses = [[2002, 50000], [2003, 45000], [2004, 39805], [2005, 68040], [2006, 99999], [2007, 104020], [2008, 15005], [2009, 10000], [2010, 25045], [2011, 75412]];
             //var income = [[2002, 112000], [2003, 122000], [2004, 104000], [2005, 99000], [2006, 121000], [2007, 148000], [2008, 114000], [2009, 133000], [2010, 161000], [2011, 173000]];
-            var income = new Array();
-            var expenses = new Array();
-            var ticks = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September'];
+            var income = [0,0,0,0,0,0,0,0,0,0,0,0];
+            var expenses = [0,0,0,0,0,0,0,0,0,0,0,0];
+            var ticks = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
             
             // Query the database
             ///
             function queryDB(tx) {
-                //tx.executeSql('SELECT * FROM Bank_Account', [], bank_accountSuccess, errorCB);
+                tx.executeSql('SELECT * FROM Bank_Account', [], bank_accountSuccess, errorCB);
                 tx.executeSql('SELECT * FROM sms', [], querySuccess, errorCB);
             }
             
             function bank_accountSuccess(tx, results)
             {
                 var len = results.rows.length;
-                alert(len);
+                //alert(len);
                 for (var i=0; i<len; i++)
                 {
-                    alert(results.rows.item(i).Acc_Name);
+                    //alert(results.rows.item(i).Acc_Name);
                     $("div h3").text(results.rows.item(i).Acc_Name+ " " + results.rows.item(i).Bank + " : "+ results.rows.item(i).Account_Num);
                 }
+            }
+            
+            function getMonthPos(month)
+            {
+                //FORMAT YYYY/MM/DD OR YYYY-MM-DD OR YYYY*MM*DD
+                return month.substr(5,2);
             }
 
             // Query the success callback
@@ -59,16 +65,16 @@
             function querySuccess(tx, results) {
                 var len = results.rows.length;
                // for (var i=0; i<len; i++){
-                    var found = false;
                     for(var i = 0 ; i < len; i++)
                     {
+                        //alert(results.rows.item(i).Amount);
                         if(results.rows.item(i).Amount < 0)
                         {
-                            expenses.push(-1*results.rows.item(i).Amount);
+                            expenses[(1*getMonthPos(results.rows.item(i).Date))-1]= expenses[(1*getMonthPos(results.rows.item(i).Date))-1] + (-1)*results.rows.item(i).Amount;
                         }
                         else
                         {
-                            income[income.length] = results.rows.item(i).Amount;
+                            income[(1*getMonthPos(results.rows.item(i).Date))-1] = income[(1*getMonthPos(results.rows.item(i).Date))-1] + 1*results.rows.item(i).Amount;
                         }
                    
                     }
@@ -157,7 +163,6 @@
                         placement: 'outside'
                     }  
                     });
-                   
             }
           
           // Transaction error callback
