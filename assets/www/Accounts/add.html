@@ -1,0 +1,173 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <title>
+            Account Addition
+        </title>
+        <link rel="stylesheet" href="../theme/Wikus/WikusTheme.css" />
+        <link rel="stylesheet" href="../theme/Wikus/jquery.mobile.structure-1.1.0.min.css" />
+        <script src="../theme/Wikus/jquery-1.7.1.min.js"></script>
+        <script src="../theme/Wikus/jquery.mobile-1.1.0.min.js"></script>
+        <script type="text/javascript" charset="utf-8" src="../cordova-1.9.0.js"></script>
+        <script type="text/javascript">
+            function redirect(val)
+            {
+                window.location = val;
+            }
+        </script>
+        <script class="code" type="text/javascript">
+
+        function startLoading(val)
+        {
+            $('div#loading').show();
+            var wait = ((Math.random()*3)+1)*1000;
+            var t = setTimeout("redirect('"+val+"/index.html')",wait);
+        }
+
+        function stopLoading()
+        {
+            $('div#loading').hide();
+        }
+
+        //startLoading();
+
+        $(document).ready(function()
+        {
+            stopLoading();
+        });
+
+        </script>
+        <script>
+            document.addEventListener("deviceready", onDeviceReady, false);
+
+            var Accounts = new Array();
+            var newAccounts = new Array();
+            var tmpSQL ="";
+            var db;
+
+            // Query the database
+            ///
+            function queryDB(tx) {
+                tx.executeSql('SELECT * FROM Bank_Account', [], bank_accountSuccess, errorCB);
+                tx.executeSql('SELECT * FROM sms', [], querySuccess, errorCB);
+            }
+            
+            function updateDB(tx) 
+            {
+                tx.executeSql(tmpSQL);
+            }
+            
+            function bank_accountSuccess(tx, results)
+            {
+                var len = results.rows.length;
+                for (var i=0; i<len; i++)
+                {
+                    Accounts.push(results.rows.item(i).Account_Num);
+                }
+            }
+
+            // Query the success callback
+            //
+            function querySuccess(tx, results) {
+                var len = results.rows.length;
+                //alert(len);
+                
+                for (var i=0; i<len; i++)
+                {
+                    var accNum = results.rows.item(i).Account_Num;
+                    if(Accounts.indexOf(accNum) > -1)
+                    {
+                        if(newAccounts.indexOf(accNum) < 0)
+                        {
+                            newAccounts.push(accNum);
+                            //alert(results.rows.item(i).Account_Num);
+                            $("#selectmenu2").append('<option value="'+accNum+'">'+accNum+'</option>');
+                        }
+                    }
+                }
+            }
+
+            // Transaction error callback
+            //
+            function errorCB(err) 
+            {
+                alert("Error processing SQL: "+err.code);
+            }
+
+
+            // Cordova is ready
+            //
+            function onDeviceReady() {
+                db = window.openDatabase("Database", "1.0", "Flying Lions Database", 10485760);
+                db.transaction(queryDB, errorCB);
+                startup();
+            }
+            
+            function startup()
+            {
+                $('input.update').click(function()
+                {
+                    updateAccounts();
+                });
+            }
+
+            function addAccount(tmpAcc_Num, tmpBank, tmpAcc_Name)
+            {
+                tmpSQL = "INSERT INTO Bank_Account(Account_Num, Bank, Acc_Name, Balance) values('"+tmpAcc_Num+"','"+tmpBank+"','"+tmpAcc_Name+"',0)";
+                db = window.openDatabase("Database", "1.0", "Flying Lions Database", 10485760);
+                db.transaction(updateDB, errorCB);
+            }
+			
+			function updateAccounts() {
+				var account_num = $('select#selectmenu2').val();
+				if (account_num.length==0) {
+				alert("No new accounts");
+				return;
+				}
+
+				var acc_name = $('input#acc_name').val();
+				var bank =  $('input#bank').val();
+
+				alert("accnum"+account_num+"\nacc_name:"+acc_name+"\nbank:"+bank);
+				addAccount(account_num,acc_name,bank);
+			}
+            
+        </script>
+    </head>
+    <body>
+		<!-- Add Accounts -->
+<div data-role="page" id="page1">
+	<div data-role="content" style="padding: 15px">
+		<div data-role="fieldcontain">
+			<label for="selectmenu2">
+				Choose:
+			</label>
+			<select name="selectmenu2" id="selectmenu2">
+				
+			</select>
+		</div>
+		<div data-role="fieldcontain">
+			<fieldset data-role="controlgroup">
+				<label for="textinput1">
+					Bank
+				</label>
+				<input name="" id="bank" placeholder="" value="" type="text">
+			</fieldset>
+		</div>
+		<div data-role="fieldcontain">
+			<fieldset data-role="controlgroup">
+				<label for="textinput2">
+					Account Name
+				</label>
+				<input id="acc_name" placeholder="" value="" type="text">
+			</fieldset>
+		</div>
+		<input class="update" value="Update" type="submit">
+	</div>
+</div>
+
+
+
+
+    </body>
+</html>
