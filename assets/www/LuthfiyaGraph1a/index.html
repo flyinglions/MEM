@@ -32,7 +32,8 @@
             ///
             function queryDB(tx) {
                 tx.executeSql('SELECT * FROM Bank_Account', [], bank_accountSuccess, errorCB);
-                tx.executeSql('SELECT * FROM Budget_Items', [], querySuccess, errorCB);
+                tx.executeSql('SELECT * FROM Budget_Items', [], queryBudgetSuccess, errorCB);
+                tx.executeSql('SELECT * FROM sms', [], querySuccess, errorCB);
             }
             
             function bank_accountSuccess(tx, results)
@@ -43,6 +44,32 @@
                     $("div h3").text(results.rows.item(i).Acc_Name+ " " + results.rows.item(i).Bank + " : "+ results.rows.item(i).Account_Num);
                 }
             }
+            
+            function queryBudgetSuccess(tx, results) {
+                var len = results.rows.length;
+                
+                for (var i=0; i<len; i++)
+                {
+                    //INSERT INTO sms(Date,Time,Amount,Balance,Location,Account_Num,Category)
+                    Gategories.push(results.rows.item(i).Category);
+                    //Spent.push(results.rows.item(i).Amount);
+                    //alert(results.rows.item(i).Budget_Amount);
+                    Budgeted.push(1*results.rows.item(i).Budget_Amount);
+                    Spent.push(0);
+                }
+            }
+            
+            function getIndexInCategory(category)
+            {
+                for(var i = 0 ; i < Gategories.length; i++)
+                {
+                    if(category == Gategories[i])
+                    {
+                        return i;
+                    }
+                }
+                return -1;
+            }
 
             // Query the success callback
             //
@@ -52,9 +79,16 @@
                 
                 for (var i=0; i<len; i++)
                 {
-                    Gategories.push(results.rows.item(i).Category);
-                    Spent.push(results.rows.item(i).Budget_Amount - results.rows.item(i).Remaining);
-                    Budgeted.push(results.rows.item(i).Budget_Amount);
+                    var pos = getIndexInCategory(results.rows.item(i).Category);
+                    if(pos > -1)
+                    {
+                        var spentValue = results.rows.item(i).Amount;
+                        if(spentValue < 0)
+                        {
+                            Spent[pos] = Spent[pos] + ((-1)*spentValue);
+                        }
+                    }
+                    //INSERT INTO sms(Date,Time,Amount,Balance,Location,Account_Num,Category)
                 }
                 
                
@@ -96,7 +130,7 @@
                 },
                 axes: {
                     xaxis: {
-                    label: "Month",
+                    label: "Category",
                     renderer: $.jqplot.CategoryAxisRenderer,
                     labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
                     tickRenderer: $.jqplot.CanvasAxisTickRenderer,
@@ -179,7 +213,7 @@
                 },
                 axes: {
                     xaxis: {
-                    label: "Month",
+                    label: "Category",
                     renderer: $.jqplot.CategoryAxisRenderer,
                     labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
                     tickRenderer: $.jqplot.CanvasAxisTickRenderer,

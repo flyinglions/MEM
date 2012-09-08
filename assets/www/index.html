@@ -47,14 +47,15 @@
 
         </script>		
     <script type="text/javascript" src="./javascript/Queue.compressed.js"></script>
+    <script type="text/javascript" src="./javascript/inisystem.js"></script>
     <script type="text/javascript">
-        document.addEventListener("deviceready", onWikusDeviceReady, false);
+        //document.addEventListener("deviceready", onWikusDeviceReady, false);
         
         var db = null;
         var functionQueue = new Queue();
         var typeQueue = new Queue();
         
-        function onWikusDeviceReady()
+        /*function onWikusDeviceReady()
         {
             db = window.openDatabase("Database", "1.0", "Flying Lions Database", 10485760);
             //alert("ready");
@@ -64,7 +65,7 @@
             createIfNotExistTables();
             
             checkQueue();
-        }
+        }*/
         
         function createIfNotExistTables()
         {
@@ -74,10 +75,10 @@
             functionQueue.enqueue('CREATE TABLE IF NOT EXISTS Budget_Items (Category UNIQUE,Budget_Amount,Remaining)');
             typeQueue.enqueue('CREATE');
             
-            functionQueue.enqueue('CREATE TABLE IF NOT EXISTS sms (SMS_ID,Date,Time,Amount,Balance,Category,Account_Num)');
+            functionQueue.enqueue('CREATE TABLE IF NOT EXISTS sms (SMS_ID,Date,Time,Amount,Balance,Location,Account_Num,Category)');
             typeQueue.enqueue('CREATE');
             
-            functionQueue.enqueue('CREATE TABLE IF NOT EXISTS Reconciliation (Transaction_ID,Type,Recon,Account_Num,SMS_ID)');
+            functionQueue.enqueue('CREATE TABLE IF NOT EXISTS Recon (Transaction_ID,Type,Recon,Account_Num,SMS_ID)');
             typeQueue.enqueue('CREATE');
         }
         
@@ -140,6 +141,11 @@
             console.log("success on database transaction.");
         }
     </script>
+    <script>
+	
+        
+		
+    </script>
 </head>
 <body onload="init()">
 		
@@ -149,8 +155,8 @@
             </div>
             <div data-role="content" data-theme="a">
                 <input class="button" type="button" value="Accounts" onclick="redirect('Accounts.html');"/><br />
-                <input class="button" type="button" value="Settings" onclick="redirect('Settings.html');"/><br />
-                <input class="button" type="button" value="Reports" onclick="redirect('graphMenu.html')"/><br />
+                <input class="button" type="button" data-icon="gear" value="Settings" onclick="redirect('Settings.html');"/><br />
+                <input class="button" type="button" data-icon="grid" value="Reports" onclick="redirect('graphMenu.html')"/><br />
                 <input class="button" type="button" value="Add Manual" onclick="redirect('addManual.html')"/><br />
                 <div id="loading" style="display: inline" class="ui-loader ui-corner-all ui-body-a ui-loader-verbose">
                 <span class="ui-icon ui-icon-loading"></span>

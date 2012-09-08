@@ -16,12 +16,12 @@
       <div data-role="header" data-position="inline">
         <h1>Income</h1>
       </div>
-      <div data-role="content" data-theme="a">
-        <h3>Bank Account</h3>
-        <div id="chart1" style="height:300px; width:300px;"></div>
+      <div data-role="content" data-theme="a" class="ReportContent">
         <script class="code" type="text/javascript">
             document.addEventListener("deviceready", onDeviceReady, false);
-            
+            var plot1 = new Array();
+            var accounts = new Array();
+            var acc_Num = new Array();
             var income = [0,0,0,0,0,0,0,0,0,0,0,0];
             var ticks = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
             
@@ -36,117 +36,151 @@
             {
                 var len = results.rows.length;
                 //alert(len);
+                //len = 1;
                 for (var i=0; i<len; i++)
                 {
                     //alert(results.rows.item(i).Acc_Name);
-                    $("div h3").text(results.rows.item(i).Acc_Name+ " " + results.rows.item(i).Bank + " : "+ results.rows.item(i).Account_Num);
+                    accounts.push(results.rows.item(i).Acc_Name+ " " + results.rows.item(i).Bank + " : "+ results.rows.item(i).Account_Num);
+                    acc_Num.push(results.rows.item(i).Account_Num);
+                    //$("div h3").text();
                 }
             }
             
             function getMonthPos(month)
             {
                 //FORMAT YYYY/MM/DD OR YYYY-MM-DD OR YYYY*MM*DD
-                return month.substr(5,2);
+                //FORMAT dd/mm/yy
+                var dateArr = month.split("/");
+                return dateArr[1];
+            }
+            
+            function sanitizeSpaces(value)
+            {
+                return value.replace(" ","_");
             }
 
             // Query the success callback
             //
             function querySuccess(tx, results) {
                 var len = results.rows.length;
-               // for (var i=0; i<len; i++){
+                var output = "";
+                
+                for(var j = 0 ; j < accounts.length; j++)
+                {
+                    income = [0,0,0,0,0,0,0,0,0,0,0,0];
+                    //alert(sanitizeSpaces(acc_Num[j]));
+                    
+                    $('<h3>'+accounts[j]+'</h3>').appendTo('.ReportContent');
+                    $('<div id="'+sanitizeSpaces(acc_Num[j])+'" style="height:300px; width:300px;"></div>').appendTo('.ReportContent');
+                    
                     for(var i = 0 ; i < len; i++)
                     {
-                        //alert(results.rows.item(i).Amount);
-                        if(results.rows.item(i).Amount > 0)
+                        //alert(results.rows.item(i).Account_Num);
+                        //alert(sanitizeSpaces(results.rows.item(i).Account_Num) +":"+ sanitizeSpaces(acc_Num[j]))
+                        
+                        if(sanitizeSpaces(results.rows.item(i).Account_Num) == sanitizeSpaces(acc_Num[j]))
                         {
-                            income[(1*getMonthPos(results.rows.item(i).Date))-1] = income[(1*getMonthPos(results.rows.item(i).Date))-1] + 1*results.rows.item(i).Amount;
+                            if(sanitizeSpaces(results.rows.item(i).Account_Num) == "TJK_1234")
+                        {
+                            alert(sanitizeSpaces(acc_Num[j]));
                         }
-                   
+                            if(results.rows.item(i).Amount > 0)
+                            {
+                                income[(1*getMonthPos(results.rows.item(i).Date))-1] = income[(1*getMonthPos(results.rows.item(i).Date))-1] + 1*results.rows.item(i).Amount;
+                            }
+                        }
+
                     }
+                    plotGraph(sanitizeSpaces(acc_Num[j]));
+                }
+            }
             
-                plot1 = $.jqplot("chart1", [income], {
-                title: 'Overview of Cash Flow',
-                animate: true,
-                animateReplot: true,
-                cursor: {
-                    show: true,
-                    zoom: true,
-                    looseZoom: true,
-                    showTooltip: false
-                },
-                series:[
-                    {
-                    label:'income',
-                    pointLabels: {
-                        //show: true
-                    },
-                    renderer: $.jqplot.BarRenderer,
-                    showHighlight: false,
-                    yaxis: 'yaxis',
-                    rendererOptions: {
-                        animation: {
-                        speed: 2500
+            function plotGraph(name)
+            {
+                alert(income);
+                $.jqplot(name, [income], {
+                        title: 'Overview of Cash Flow',
+                        animate: true,
+                        animateReplot: true,
+                        cursor: {
+                            show: true,
+                            zoom: true,
+                            looseZoom: true,
+                            showTooltip: false
                         },
-                        barWidth: 15,
-                        barPadding: -15,
-                        barMargin: 0,
-                        highlightMouseOver: false
-                    }
-                    },
-                    {
-                    label:'Expenses',
-                    rendererOptions: {
-                        animation: {
-                        speed: 2000
-                        }
-                    }
-                    }
-                ],
-                axesDefaults: {
-                    pad: 0
-                },
-                axes: {
-                    xaxis: {
-                    label: "Month",
-                    renderer: $.jqplot.CategoryAxisRenderer,
-                    //labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
-                    tickRenderer: $.jqplot.CanvasAxisTickRenderer,
-                    ticks: ticks,
-                    tickOptions: {
-                        angle: 90
-                    }
-                    },
-                    yaxis: {
-                    label: "Cash Amount",
-                    tickOptions: {
-                        formatString: "R%'d"
-                    },
-                    rendererOptions: {
-                        //forceTickAt0: true
-                    }
-                    },
-                    y2axis: {
-                    tickOptions: {
-                        formatString: "R%'d"
-                    },
-                    rendererOptions: {
-                        alignTicks: true,
-                        forceTickAt0: true
-                    }
-                    }
-                },
-                highlighter: {
-                    show: true,
-                    showLabel: true,
-                    tooltipAxes: 'y',
-                    sizeAdjust: 7.5 , tooltipLocation : 'ne'
-                },
-                legend: {
-                    show: true,
-                    location: 'e',
-                    placement: 'outside'
-                }  
-                });
+                        series:[
+                            {
+                            label:'income',
+                            pointLabels: {
+                                //show: true
+                            },
+                            renderer: $.jqplot.BarRenderer,
+                            showHighlight: false,
+                            yaxis: 'yaxis',
+                            rendererOptions: {
+                                animation: {
+                                speed: 2500
+                                },
+                                barWidth: 15,
+                                barPadding: -15,
+                                barMargin: 0,
+                                highlightMouseOver: false
+                            }
+                            },
+                            {
+                            label:'Expenses',
+                            rendererOptions: {
+                                animation: {
+                                speed: 2000
+                                }
+                            }
+                            }
+                        ],
+                        axesDefaults: {
+                            pad: 0
+                        },
+                        axes: {
+                            xaxis: {
+                            label: "Month",
+                            renderer: $.jqplot.CategoryAxisRenderer,
+                            //labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
+                            tickRenderer: $.jqplot.CanvasAxisTickRenderer,
+                            ticks: ticks,
+                            tickOptions: {
+                                angle: 90
+                            }
+                            },
+                            yaxis: {
+                            label: "Cash Amount",
+                            tickOptions: {
+                                formatString: "R%'d"
+                            },
+                            rendererOptions: {
+                                //forceTickAt0: true
+                            }
+                            },
+                            y2axis: {
+                            tickOptions: {
+                                formatString: "R%'d"
+                            },
+                            rendererOptions: {
+                                alignTicks: true,
+                                forceTickAt0: true
+                            }
+                            }
+                        },
+                        highlighter: {
+                            show: true,
+                            showLabel: true,
+                            tooltipAxes: 'y',
+                            sizeAdjust: 7.5 , tooltipLocation : 'ne'
+                        },
+                        legend: {
+                            show: true,
+                            location: 'sw',
+                            placement: 'outside'
+                        }  
+                    });
             }
           
           // Transaction error callback

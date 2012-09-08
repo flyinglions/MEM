@@ -7,6 +7,8 @@ var firstRun = true;
 
 function init()
 {
+
+console.log("****************************************\n\n\n\n*********************************************************");
 	if(isPhoneGapReady)
 		{
 			onDeviceReady();
@@ -27,6 +29,15 @@ function onDeviceReady()
 	//Any startup events
 	executeStartupEvents();
 	
+	/*read all files in MEM and delete them*/
+	getDirectoryEntries(got_direntries);
+	
+	/*Code for opening the Database: Wikus*/
+	db = window.openDatabase("Database", "1.0", "Flying Lions Database", 10485760);
+	//alert("ready");
+	//dropTables();	
+	createIfNotExistTables();
+	checkQueue();
 
 }
 
@@ -53,6 +64,7 @@ function executeStartupEvents(){
 				function onResume(buttonIndex) {
 					if(isPhoneGapReady == false){
 						init();
+						
 					}
 					else{
 						//alert('Resuming');
@@ -73,7 +85,10 @@ function executeStartupEvents(){
 				    //console.log("BAAAAAAAAAAAAACCCCCCCCCCCCKKKKKKKKKKKKK");
 				    //navigator.app.backHistory();
 				    //window.history.back();
-				} 				
+				} 	
+
+				
+				
 				
 			   
 		
@@ -95,3 +110,16 @@ function notificationCallback(){
 }*/
 
 
+function got_direntries() {					
+	//alert("got entries");
+	
+	 alert(text_array.length);
+	var k=0;
+	for (k=0;k<text_array.length; k++) {
+	alert(text_array[k]);//Wikus:)
+	//process text...sql
+	
+	}
+}
+				//readFile("/sdcard/MEM/");
+				//alert('Pieter');

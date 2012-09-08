@@ -189,7 +189,7 @@ function fileReaderSuccess(file) {
     reader.onloadend = function(e) {
     
         file_text = e.target.result;
-        alert("read:"+file_text);
+       // alert("read:"+file_text);
 
         if (file_text.length==0) {
 
@@ -197,6 +197,10 @@ function fileReaderSuccess(file) {
         }
         // alert("file_text: "+file_text);
         theini = new Ini(file_text);
+		
+		startINIcallback();
+		/*when done with ini - write back to file*/
+		stopINI();
 
     };
     reader.onloaderror = function(e) {
@@ -245,7 +249,7 @@ reader.readAsText(file);*/
 
 function failed() {
     console.log(error.code);
-    alert("failed..");
+    //alert("failed..");
 }
 
 
@@ -278,13 +282,13 @@ function failed() {
 //var ini;
     
     
-    
 
+    var startINIcallback;
     
-    
-function startINI() {
+function startINI(call) {
+startINIcallback = call;
     fileSystemInit();
-    alert("init success");
+  //  alert("init success");
 //filename = "settings.ini";
    
   
@@ -473,7 +477,7 @@ function fail_delete(error) {
     console.log("file could not be deleted: "+error);
 }
 function success_delete(entry) {
-    console.log("file deleted successfully");
+    console.log("************file deleted successfully");
 }
 
 var file_to_delete="";
@@ -504,43 +508,124 @@ function entryfordelete(theFile) {
 function file_error(error) {
     console.log("error reading dir"+error);
 }
-function getDirectoryEntries() { 
+
+var directory_callback;
+function getDirectoryEntries(call) { 
+     directory_callback= call ;
+	// alert("in read entries");
     window.requestFileSystem(1, 0, onGetFileSystemSuccess, file_error);
 }
 
 function onGetFileSystemSuccess(fs) {  
     //theFileSystem = fs;
-    var dr = fs.root.createReader();
+   // var dr = fs.root.createReader();
+	fs.root.getDirectory("MEM", {create: true, exclusive: false}, inMEM, file_error);
+
+    /*alert(dr);*/
     // Get a list of all the entries in the directory
-    dr.readEntries(onDirReaderSuccess, file_error);
+   /* dr.readEntries(onDirReaderSuccess, file_error);*/
 }
+var mementry;
+function inMEM(direntry) {
+var dr = direntry.createReader();
+mementry = direntry;
+dr.readEntries(onDirReaderSuccess, file_error);
+}
+/*function rootdir(direntries) {
+for( i = 0; i < len; i++) {
+	if(dirEntries[i].isDirectory == true) {
+		if (dirEntries[i].name==='MEM') {	
+		console.log("found mem");		
+		dirEntries[i].readEntries(onDirReaderSuccess, file_error);
+		
+		}
 
+	} 
+}*/
+
+var dentries;
 var dir_entries_arr = new Array();
+var text_array = new Array();
+var index =0;
+var dir_currentfile;
+function rec_gotFEntry(theFile) {
+ dir_currentfile= theFile; 
+theFile.file(dir_gotFile,failed_read);
+}  
 
+//got file - now load the content:
+function dir_gotFile(file) {
+    var reader = new FileReader();
+    reader.onloadend = function(e) {    
+        var text = e.target.result;
+        console.log("file_content"+text);
+
+        if (text.length==0) {
+            console.log("file empty!");
+        } 
+		//text read
+			text_array[index]= text;
+			dir_currentfile.remove(success_delete,fail_delete);
+			index++;
+			file_counter++;
+			//console.log(file_counter+"BEFORE WHILE: dir_gotFile -> "+ dentries[file_counter].name);
+			while ( file_counter<dentries.length && dentries[file_counter].isDirectory==true ) {
+				console.log("dentries:"+dentries.length+"-"+file_counter+"IN WHILE: dir_gotFile -> "+ dentries[file_counter].name);
+				file_counter++;
+			}
+			//directory_callback();
+			if (file_counter>=dentries.length) {
+				directory_callback();
+				dir_entries_arr = new Array();
+				text_array = new Array();
+			} else
+			mementry.getFile(dentries[file_counter].name,{create : false},rec_gotFEntry,failed_read);  
+		};
+    
+    reader.onloaderror = function(e) {
+        console.log("could not load file contents");
+    };
+  
+    reader.readAsText(file);  
+}
+var file_counter=0;
 function onDirReaderSuccess(dirEntries) {
     console.log("#dir entries (" + dirEntries.length + ")");
   
-    var num_file_entries = 0;
+    //var num_file_entries = 0;
     var i,  len;
     len = dirEntries.length;
+	dentries  = dirEntries;
+	console.log("length: "+dentries.length);
+	//boolean onefile=false;
     if(len > 0) {
-    
+		
         for( i = 0; i < len; i++) {
-            if(dirEntries[i].isDirectory == true) {
+            if(dentries[i].isDirectory == true) {
+
                 console.log("dir: "+dirEntries[i].name);
         
             } else {
-                console.log("file: "+dirEntries[i].name);
-                dir_entries_arr[num_file_entries] = dirEntries[i].name;
-                num_file_entries =num_file_entries+1;
+			
+                console.log("file: "+dentries[i].name);
+				file_counter=i;
+				//onefile = true;
+				mementry.getFile(dentries[i].name,{create : false},rec_gotFEntry,failed_read);  
+				break;
+                //dir_entries_arr[num_file_entries] = dirEntries[i].name;
+				
+                //num_file_entries =num_file_entries+1;
             }
         }
-    
-    
+    //console.log("before calling");
+    //directory_callback();
     } else {
         console.log("No entries found");
     
-    } 
+    }
+	/*if (!onefile) {
+	directory_callback();
+	}*/
   
 }
 

@@ -25,7 +25,7 @@
         <h1>Income and Expenses</h1>
       </div>
       <div data-role="content" data-theme="a">
-        <h3>Bank Account</h3>
+        <h3>Loading Accounts...</h3>
         <div id="chart1" style="height:300px; width:300px;"></div>
         <script class="code" type="text/javascript">
               
@@ -47,17 +47,28 @@
             {
                 var len = results.rows.length;
                 //alert(len);
+                var accountNames = "No Accounts Found";
                 for (var i=0; i<len; i++)
                 {
                     //alert(results.rows.item(i).Acc_Name);
-                    $("div h3").text(results.rows.item(i).Acc_Name+ " " + results.rows.item(i).Bank + " : "+ results.rows.item(i).Account_Num);
+                    if(accountNames == "No Accounts Found")
+                    {
+                        accountNames = results.rows.item(i).Acc_Name+ " " + results.rows.item(i).Bank + " : "+ results.rows.item(i).Account_Num
+                    }
+                    else
+                    {
+                        accountNames = accountNames + "<br />" + results.rows.item(i).Acc_Name+ " " + results.rows.item(i).Bank + " : "+ results.rows.item(i).Account_Num
+                    }
                 }
+                $("div h3").html(accountNames);
             }
             
             function getMonthPos(month)
             {
                 //FORMAT YYYY/MM/DD OR YYYY-MM-DD OR YYYY*MM*DD
-                return month.substr(5,2);
+                //FORMAT dd/mm/yy
+                var dateArr = month.split("/");
+                return dateArr[1];
             }
 
             // Query the success callback
@@ -159,7 +170,7 @@
                     },
                     legend: {
                         show: true,
-                        location: 'e',
+                        location: 'sw',
                         placement: 'outside'
                     }  
                     });

@@ -95,24 +95,12 @@ public class SMSReceiverPlugin extends Plugin {
 				
 		        //String smsSimulation = " Absa: SPR 9437, Gesk, 29/06/12 DIREKTE DEBIET, DEAGOSTINI-4X000500, R-253.90, Saldo R4,093.75. Hulp 0860008600; VDWALPG043";
 		        
-		        smsHand.recieveSMS(msg.getMessageBody());
+		        smsHand.recieveSMS(msg.getMessageBody() + ";" + msg.getTimestampMillis());
 		        
 		        //Log.d("COMPILER OUTPUT", smsHand.toString());
 		        Log.d("COMPILER OUTPUT", smsHand.storeJSONObject().toString());
 		        
-		        //Check if it is bank sms
-		        sms.put("bank", smsHand.storeJSONObject().getString("bank"));
-		        if(!smsHand.storeJSONObject().getString("bank").equals("NOT BANK SMS"))
-		        {
-		    		
-		    		sms.put("accName", smsHand.storeJSONObject().getString("accName"));
-		    		sms.put("transaction", smsHand.storeJSONObject().getString("transaction"));
-		    		sms.put("date", smsHand.storeJSONObject().getString("date"));
-		    		sms.put("description", smsHand.storeJSONObject().getString("description"));
-		    		sms.put("amount", smsHand.storeJSONObject().getString("amount"));
-		    		sms.put("balance", smsHand.storeJSONObject().getString("balance"));
-		        }
-				
+		
 				
 				Date dateObj = new Date(msg.getTimestampMillis());
 				DateFormat df = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
@@ -161,6 +149,18 @@ public class SMSReceiverPlugin extends Plugin {
 				{
 			 	   	Log.e(TAG + ":sendMessage", "JSON exception");
 				}*/
+				
+				/*
+				 *     	 FileWriter fileWriter;
+					   	 fileWriter = new FileWriter("/mnt/sdcard/SQLStatements.txt", true);
+					   	 fileWriter.append(Insert + "\r\n");
+					     fileWriter.append(recon + "\r\n");
+					   	 fileWriter.flush();
+					   	 fileWriter.close();    	
+    	
+				 * 
+				 * 
+				 */
 			}
 		
 	}
