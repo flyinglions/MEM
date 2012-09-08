@@ -56,7 +56,23 @@
             
             function sanitizeSpaces(value)
             {
-                return value.replace(" ","_");
+                var newValue = value;
+                
+                newValue = replaceAll(".", newValue);
+                newValue = replaceAll("/", newValue);
+                newValue = replaceAll(" ", newValue);
+                
+                return newValue;
+            }
+            
+            function replaceAll(exp, value)
+            {
+                newValue = value;
+                while(newValue.indexOf(exp) > -1)
+                {
+                    newValue = newValue.replace(exp,"_");
+                }
+                return newValue;
             }
 
             // Query the success callback
@@ -68,7 +84,7 @@
                 for(var j = 0 ; j < accounts.length; j++)
                 {
                     income = [0,0,0,0,0,0,0,0,0,0,0,0];
-                    //alert(sanitizeSpaces(acc_Num[j]));
+                    alert(sanitizeSpaces(acc_Num[j]));
                     
                     $('<h3>'+accounts[j]+'</h3>').appendTo('.ReportContent');
                     $('<div id="'+sanitizeSpaces(acc_Num[j])+'" style="height:300px; width:300px;"></div>').appendTo('.ReportContent');
@@ -80,10 +96,6 @@
                         
                         if(sanitizeSpaces(results.rows.item(i).Account_Num) == sanitizeSpaces(acc_Num[j]))
                         {
-                            if(sanitizeSpaces(results.rows.item(i).Account_Num) == "TJK_1234")
-                        {
-                            alert(sanitizeSpaces(acc_Num[j]));
-                        }
                             if(results.rows.item(i).Amount > 0)
                             {
                                 income[(1*getMonthPos(results.rows.item(i).Date))-1] = income[(1*getMonthPos(results.rows.item(i).Date))-1] + 1*results.rows.item(i).Amount;
@@ -97,7 +109,7 @@
             
             function plotGraph(name)
             {
-                alert(income);
+                //alert(income);
                 $.jqplot(name, [income], {
                         title: 'Overview of Cash Flow',
                         animate: true,

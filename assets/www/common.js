@@ -113,13 +113,23 @@ function notificationCallback(){
 function got_direntries() {					
 	//alert("got entries");
 	
-	 alert(text_array.length);
+	 //alert(text_array.length);
 	var k=0;
-	for (k=0;k<text_array.length; k++) {
-	alert(text_array[k]);//Wikus:)
+	for (k=0;k<text_array.length; k++) 
+        {
+	//alert(text_array[k]);//Wikus:)
+            var tmpData = text_array[k].split('\r\n');
+            for(var i = 0 ; i < tmpData.length-1; i++)
+            {
+                //alert(tmpData[i]);
+                functionQueue.enqueue(tmpData[i]);
+                typeQueue.enqueue('INSERT');
+            }
 	//process text...sql
 	
 	}
+        
+        checkQueue();
 }
 				//readFile("/sdcard/MEM/");
 				//alert('Pieter');
