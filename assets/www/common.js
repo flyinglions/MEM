@@ -8,6 +8,7 @@ var firstRun = true;
 function init()
 {
 
+
 console.log("****************************************\n\n\n\n*********************************************************");
 	if(isPhoneGapReady)
 		{
@@ -20,8 +21,13 @@ console.log("****************************************\n\n\n\n*******************
 	
 }
 
+function installFileOri(){
+	console.log("FINISH");
+}
+
 function onDeviceReady()
 {
+startINI(installFileOri);
 	isPhoneGapReady = true;
 	
 	isFirstRun = true;

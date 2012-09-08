@@ -1,56 +1,53 @@
 package org.flying.lions;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Scanner;
+import java.io.File;
+
+import android.os.Environment;
+
 
 public class RuleReader {
-	
-		//
-		private String absaRule = "<ABSA,;> <accName,,> <TransactionType,,> <Date,;> <Location,,> <\"R\"amount,,> * <\"R\"balance,.> * * *";
-	   	private String confFileName = "ABSARules.ini";
-	    private String[] tokenedRules = null;
 
-	    public void iniRules(){
-	        //File locationFile = new File("");
-	        //String fileLocation = locationFile.getCanonicalPath().toString() + "\\" + confFileName;
+    private String confFileName = "ABSARules.ini";
+    private String[] tokenedRules = null;
 
-	        //File toReadFile = new File(fileLocation);
-	        //Scanner lineScanner = new Scanner(toReadFile);
-	        Scanner lineScanner = new Scanner(absaRule);
-	        lineScanner.useDelimiter(" ");
+    public RuleReader(String newConfName) {
+        confFileName = newConfName;
+    }
 
-	        int size = this.rulesSize();
-	        tokenedRules = new String[size];
+    RuleReader() {
+        
+    }
 
-	        for (int a = 0; a < size; a++) {
-	            tokenedRules[a] = lineScanner.next();
-	        }
-	    }
+    public void iniRules() throws IOException {
+     
+        File sdcard = Environment.getExternalStorageDirectory();
 
-	    private int rulesSize(){
-	        int result = 0;
+      //Get the text file
+        File file = new File(sdcard + "/MEM/ORI",confFileName);
+    	
+        Scanner sc = new Scanner(file);
+        
+        String tempString = sc.nextLine();
+        
+        
+        sc.close();
+        
+        tokenedRules = tempString.split(" ");
+    }
 
-	        //File locationFile = new File("");
-	        //String fileLocation = locationFile.getCanonicalPath().toString() + "\\" + confFileName;
 
-	        //File toReadFile = new File(fileLocation);
-	        //Scanner lineScanner = new Scanner(toReadFile);
-	        Scanner lineScanner = new Scanner(absaRule);
-	        lineScanner.useDelimiter(" ");
 
-	        while (lineScanner.hasNext()) {
-	            result += 1;
-	            lineScanner.next();
-	        }
-	        return result;
-	    }
+    public String getConfFileName() {
+        return confFileName;
+    }
 
-	    public String getConfFileName() {
-	        return confFileName;
-	    }
-
-	    public String[] getTokenedRules() {
-	        return tokenedRules;
-	    }
-
+    public String[] getTokenedRules() {
+        return tokenedRules;
+    }
 }

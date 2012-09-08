@@ -8,6 +8,7 @@ import java.util.Date;
 
 import org.apache.cordova.api.PluginResult;
 import org.apache.cordova.api.PluginResult.Status;
+import org.apache.cordova.Notification;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -83,31 +84,25 @@ public class SMSReceiverPlugin extends Plugin {
 			Log.d(TAG, "sendMessage Called");
 			// build JSON message
 			JSONObject sms = new JSONObject();
-			SMSHandler smsHand = new SMSHandler();
+			MultipleSmsHandler smsHand = new MultipleSmsHandler();
 			
 			try
 			{
 				
 				sms.put("origin", msg.getOriginatingAddress());
 				sms.put("body", msg.getMessageBody());
-				sms.put("id", msg.getTimestampMillis());
-				Log.d(TAG, "test");
+				//sms.put("id", msg.getTimestampMillis());
 				
 		        //String smsSimulation = " Absa: SPR 9437, Gesk, 29/06/12 DIREKTE DEBIET, DEAGOSTINI-4X000500, R-253.90, Saldo R4,093.75. Hulp 0860008600; VDWALPG043";
+
+		        smsHand.parseSMS(msg.getMessageBody() + ";" + msg.getTimestampMillis());
 		        
-		        smsHand.recieveSMS(msg.getMessageBody() + ";" + msg.getTimestampMillis());
-		        
-		        //Log.d("COMPILER OUTPUT", smsHand.toString());
-		        Log.d("COMPILER OUTPUT", smsHand.storeJSONObject().toString());
-		        
-		
-				
-				Date dateObj = new Date(msg.getTimestampMillis());
+				/*Date dateObj = new Date(msg.getTimestampMillis());
 				DateFormat df = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
 				String timeDate = df.format(dateObj);
 				//Log.v(TAG + ":sendJavascript", timeDate);
 				
-				sms.put("time", timeDate);
+				sms.put("time", timeDate);*/
 			}
 			catch (JSONException e)
 			{
