@@ -34,6 +34,7 @@
             //var income = [[2002, 112000], [2003, 122000], [2004, 104000], [2005, 99000], [2006, 121000], [2007, 148000], [2008, 114000], [2009, 133000], [2010, 161000], [2011, 173000]];
             var income = [0,0,0,0,0,0,0,0,0,0,0,0];
             var expenses = [0,0,0,0,0,0,0,0,0,0,0,0];
+            var acc_Num = new Array();
             var ticks = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
             
             // Query the database
@@ -41,6 +42,27 @@
             function queryDB(tx) {
                 tx.executeSql('SELECT * FROM Bank_Account', [], bank_accountSuccess, errorCB);
                 tx.executeSql('SELECT * FROM sms', [], querySuccess, errorCB);
+            }
+            
+            function sanitize(value)
+            {
+                var newValue = value;
+                
+                newValue = replaceAll(".", newValue);
+                newValue = replaceAll("/", newValue);
+                newValue = replaceAll(" ", newValue);
+                
+                return newValue;
+            }
+            
+            function replaceAll(exp, value)
+            {
+                newValue = value;
+                while(newValue.indexOf(exp) > -1)
+                {
+                    newValue = newValue.replace(exp,"_");
+                }
+                return newValue;
             }
             
             function bank_accountSuccess(tx, results)
@@ -51,6 +73,7 @@
                 for (var i=0; i<len; i++)
                 {
                     //alert(results.rows.item(i).Acc_Name);
+                    acc_Num.push(results.rows.item(i).Account_Num);
                     if(accountNames == "No Accounts Found")
                     {
                         accountNames = results.rows.item(i).Acc_Name+ " " + results.rows.item(i).Bank + " : "+ results.rows.item(i).Account_Num
@@ -79,15 +102,20 @@
                     for(var i = 0 ; i < len; i++)
                     {
                         //alert(results.rows.item(i).Amount);
-                        if(results.rows.item(i).Amount < 0)
+                        for(var j = 0 ; j < acc_Num.length; j++)
                         {
-                            expenses[(1*getMonthPos(results.rows.item(i).Date))-1]= expenses[(1*getMonthPos(results.rows.item(i).Date))-1] + (-1)*results.rows.item(i).Amount;
+                            if(sanitize(results.rows.item(i).Account_Num) == sanitize(acc_Num[j]))
+                            {
+                                if(results.rows.item(i).Amount < 0)
+                                {
+                                    expenses[(1*getMonthPos(results.rows.item(i).Date))-1]= expenses[(1*getMonthPos(results.rows.item(i).Date))-1] + (-1)*results.rows.item(i).Amount;
+                                }
+                                else
+                                {
+                                    income[(1*getMonthPos(results.rows.item(i).Date))-1] = income[(1*getMonthPos(results.rows.item(i).Date))-1] + 1*results.rows.item(i).Amount;
+                                }
+                            }
                         }
-                        else
-                        {
-                            income[(1*getMonthPos(results.rows.item(i).Date))-1] = income[(1*getMonthPos(results.rows.item(i).Date))-1] + 1*results.rows.item(i).Amount;
-                        }
-                   
                     }
                     
                     plot1 = $.jqplot("chart1", [income, expenses], {

@@ -84,7 +84,7 @@
                 for(var j = 0 ; j < accounts.length; j++)
                 {
                     income = [0,0,0,0,0,0,0,0,0,0,0,0];
-                    alert(sanitize(acc_Num[j]));
+                    //alert(sanitize(acc_Num[j]));
                     
                     $('<h3>'+accounts[j]+'</h3>').appendTo('.ReportContent');
                     $('<div id="'+sanitize(acc_Num[j])+'" style="height:300px; width:300px;"></div>').appendTo('.ReportContent');
@@ -93,11 +93,12 @@
                     {
                         //alert(results.rows.item(i).Account_Num);
                         //alert(sanitize(results.rows.item(i).Account_Num) +":"+ sanitize(acc_Num[j]))
-                        
                         if(sanitize(results.rows.item(i).Account_Num) == sanitize(acc_Num[j]))
                         {
                             if(results.rows.item(i).Amount > 0)
                             {
+                                //alert(results.rows.item(i).Account_Num);
+                                //alert(results.rows.item(i).Amount);
                                 income[(1*getMonthPos(results.rows.item(i).Date))-1] = income[(1*getMonthPos(results.rows.item(i).Date))-1] + 1*results.rows.item(i).Amount;
                             }
                         }
