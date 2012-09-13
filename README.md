@@ -1,6 +1,6 @@
+#MEM
 
-
-=Reading categories=
+###Reading categories from inisystem
 call startINI(fcall); first
 then:
 	function fcall() {
