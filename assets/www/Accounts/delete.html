@@ -2,7 +2,7 @@
 <html>
     <head>
         <title>
-            Account Addition
+            Account Deletion
         </title>
         <link rel="stylesheet" href="../theme/Wikus/WikusTheme.css" />
         <link rel="stylesheet" href="../theme/Wikus/jquery.mobile.structure-1.1.0.min.css" />
@@ -41,8 +41,6 @@
             document.addEventListener("deviceready", onDeviceReady, false);
 
             var Accounts = new Array();
-            var Bank = new Array();
-            var Acc_Name = new Array();
             var newAccounts = new Array();
             var tmpSQL ="";
             var db;
@@ -53,25 +51,9 @@
                 tx.executeSql('SELECT * FROM Bank_Account', [], bank_accountSuccess, errorCB);
             }
             
-            function deleteDB(tx) 
+            function updateDB(tx) 
             {
-                //tmpSQL = "INSERT INTO Bank_Account (Account_Num, Bank, Acc_Name, Balance) VALUES ('SPR 1000','ABSA','Petrus van Der walt',0)";
-                //alert(tmpSQL);
                 tx.executeSql(tmpSQL);
-                alert("Account deleted successfully!");
-                $('select#selectmenu2').val("");
-                $('#bank').val("");
-                $('#acc_name').val("");
-            }
-            
-            function updateSuccess()
-            {
-                //alert('Insert Success');
-            }
-            
-            function errorInsert(err) 
-            {
-                alert("Error processing SQL: "+err.code+" : "+tmpSQL);
             }
             
             function bank_accountSuccess(tx, results)
@@ -80,10 +62,27 @@
                 for (var i=0; i<len; i++)
                 {
                     Accounts.push(results.rows.item(i).Account_Num);
-                    Bank.push(results.rows.item(i).Bank);
-                    Acc_Name.push(results.rows.item(i).Acc_Name);
+                }
+            }
+
+            // Query the success callback
+            //
+            function querySuccess(tx, results) {
+                var len = results.rows.length;
+                //alert(len);
+                
+                for (var i=0; i<len; i++)
+                {
                     var accNum = results.rows.item(i).Account_Num;
-                    $("#selectmenu2").append('<option name="'+sanitize(accNum)+'" value="'+accNum+'">'+accNum+'</option>');
+                    if(Accounts.indexOf(accNum) < 0)
+                    {
+                        if(newAccounts.indexOf(accNum) < 0)
+                        {
+                            newAccounts.push(accNum);
+                            //alert(results.rows.item(i).Account_Num);
+                            $("#selectmenu2").append('<option value="'+accNum+'">'+accNum+'</option>');
+                        }
+                    }
                 }
             }
 
@@ -91,7 +90,7 @@
             //
             function errorCB(err) 
             {
-                alert("Error processing SQL: "+err.code+" : "+tmpSQL);
+                alert("Error processing SQL: "+err.code);
             }
 
 
@@ -99,70 +98,38 @@
             //
             function onDeviceReady() {
                 db = window.openDatabase("Database", "1.0", "Flying Lions Database", 10485760);
-                db.transaction(queryDB, errorCB, updateSuccess);
+                db.transaction(queryDB, errorCB);
                 startup();
             }
             
             function startup()
             {
-                $('input.delete').click(function()
+                $('input.update').click(function()
                 {
-                    deleteAccounts();
+                    updateAccounts();
                 });
-                
-                $('#selectmenu2').change(function()
-                {
-                    var _selected = $('#selectmenu2').val();
-                    for(var i = 0 ; i < Accounts.length; i++)
-                    {
-                        if(_selected == Accounts[i])
-                        {
-                            $('#bank').val(Bank[i]);
-                            $('#acc_name').val(Acc_Name[i]);
-                        }
-                    }
-                });
-            }
-            
-            function replaceAll(exp, value)
-            {
-                newValue = value;
-                while(newValue.indexOf(exp) > -1)
-                {
-                    newValue = newValue.replace(exp,"_");
-                }
-                return newValue;
-            }
-            
-            function sanitize(value)
-            {
-                var newValue = value;
-                
-                newValue = replaceAll(".", newValue);
-                newValue = replaceAll("/", newValue);
-                newValue = replaceAll(" ", newValue);
-                
-                return newValue;
             }
 
-            function deleteAccount(tmpAcc_Num)
+            function addAccount(tmpAcc_Num, tmpBank, tmpAcc_Name)
             {
-                tmpSQL = "DELETE FROM Bank_Account WHERE Account_Num='"+tmpAcc_Num+"'";
-                $('option[name="'+sanitize(tmpAcc_Num)+'"]').detach();
+                tmpSQL = "INSERT INTO Bank_Account (Account_Num, Bank, Acc_Name, Balance) values ('"+tmpAcc_Num+"','"+tmpBank+"','"+tmpAcc_Name+"',0)";
                 db = window.openDatabase("Database", "1.0", "Flying Lions Database", 10485760);
-                //$('option[name='+tmpAcc_Num).remove();
-                db.transaction(deleteDB, errorCB);
+                db.transaction(updateDB, errorCB);
             }
 			
-            function deleteAccounts() {
-                    var account_num = $('select#selectmenu2').val();
-                    if (account_num.length==0) {
-                    alert("No account selected");
-                    return;
-                    }
-                    //alert("accnum"+account_num+"\nacc_name:"+acc_name+"\nbank:"+bank);
-                    deleteAccount(account_num);
-            }
+			function updateAccounts() {
+				var account_num = $('select#selectmenu2').val();
+				if (account_num.length==0) {
+				alert("No new accounts");
+				return;
+				}
+
+				var acc_name = $('input#acc_name').val();
+				var bank =  $('input#bank').val();
+
+				alert("accnum"+account_num+"\nacc_name:"+acc_name+"\nbank:"+bank);
+				addAccount(account_num,acc_name,bank);
+			}
             
         </script>
     </head>
@@ -183,7 +150,7 @@
 				<label for="textinput1">
 					Bank
 				</label>
-				<input name="" id="bank" placeholder="" value="" disabled="disabled" type="text">
+				<input name="" id="bank" placeholder="" value="" type="text">
 			</fieldset>
 		</div>
 		<div data-role="fieldcontain">
@@ -191,11 +158,10 @@
 				<label for="textinput2">
 					Account Name
 				</label>
-				<input id="acc_name" placeholder="" value="" disabled="disabled" type="text">
+				<input id="acc_name" placeholder="" value="" type="text">
 			</fieldset>
 		</div>
-		<input class="delete" value="Delete" type="submit"><br />
-                <input class="button" type="button" value="Back" onclick="redirect('../Accounts.html');"/><br />
+		<input class="update" value="Update" type="submit">
 	</div>
 </div>
 
