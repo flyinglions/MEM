@@ -86,12 +86,12 @@ function Ini(contents){
                         .replace(/\\t/g, '\t')
                         .replace(/\\b/g, '\b');
                     // Check boolean
-                    } else if (/^yes|on|true$/i.test(val)) {
+                    } /*else if (/^yes|on|true$/i.test(val)) {
                         val = true;
                     } else if (/^no|off|false$/i.test(val)) {
                         val = false;
                     // Check integer
-                    } else if (/^[0-9]+$/i.test(val)) {
+                    } */ else if (/^[0-9]+$/i.test(val)) {
                         val = parseInt(val, 10);
                     }
 
@@ -192,8 +192,8 @@ function fileReaderSuccess(file) {
        // alert("read:"+file_text);
 
         if (file_text.length==0) {
-
-            file_text="[author]\nname=Pieter\n[user]";
+		console.log("file empty: in process of creating new - after callback (see stopINI)"); 
+            file_text="[author]\r\nname=Pieter\r\n[categories]\r\nFood=Spar, Checkers, Pick n Pay, Piccola, Casbah, Wimpy, Spur, KFC\r\nTravel=BP, Sasol, Engen, Shell, Gautrain \r\nEntertainment=Wang, Top CD, Amazon\r\nOther=ATM\r\nTelecommunications=Vodacom, Cell C, MTN\r\n[user]";
         }
         // alert("file_text: "+file_text);
         theini = new Ini(file_text);
@@ -469,6 +469,32 @@ function write_fileWriterSuccess(writer) {
     };	
     writer.write(file_content);
 }
+
+/*Writing - with callback supported*/
+/*=============================CALLBACKS=======================*/
+function callwrite_failed(error) {
+    console.log("callback - writing error: " + error);
+}
+
+function callwriteToFile(fname) {
+    regular_FS.root.getFile(fname,{
+        create : true
+    },callwrite_gotFileEntry,write_failed);    
+}
+
+function callwrite_gotFileEntry(theFile) {
+    theFile.createWriter(callwrite_fileWriterSuccess, callwrite_failed);
+}
+
+function callwrite_fileWriterSuccess(writer) {
+    writer.onwrite = function(e) {
+        console.log("Writing done!"+file_content);
+    };	
+    writer.write(file_content);
+}
+
+
+
 /*=========================*/
 /* DELETING OF FILE */
 /*=========================*/
