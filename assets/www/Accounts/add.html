@@ -54,17 +54,20 @@
             
             function updateDB(tx) 
             {
-                tx.executeSql(tmpSQL, updateSuccess, errorInsert);
+                //tmpSQL = "INSERT INTO Bank_Account (Account_Num, Bank, Acc_Name, Balance) VALUES ('SPR 1000','ABSA','Petrus van Der walt',0)";
+                alert(tmpSQL);
+                tx.executeSql(tmpSQL);
+                alert("Account added successfully!");
             }
             
-            function updateSuccess(tx)
+            function updateSuccess()
             {
-                alert('Insert Success');
+                //alert('Insert Success');
             }
             
             function errorInsert(err) 
             {
-                alert("Insert Failed");
+                alert("Error processing SQL: "+err.code+" : "+tmpSQL);
             }
             
             function bank_accountSuccess(tx, results)
@@ -85,15 +88,27 @@
                 for (var i=0; i<len; i++)
                 {
                     var accNum = results.rows.item(i).Account_Num;
-                    if(Accounts.indexOf(accNum) < 0)
+                    var isNew = true;
+                    for(var j = 0 ; j < Accounts.length; j++)
                     {
-                        if(newAccounts.indexOf(accNum) < 0)
+                        var tmp = Accounts[j];
+                        if(tmp.toUpperCase() == accNum.toUpperCase())
                         {
-                            newAccounts.push(accNum);
-                            //alert(results.rows.item(i).Account_Num);
-                            alert(sanitize(accNum));
-                            $("#selectmenu2").append('<option name="'+sanitize(accNum)+'" value="'+accNum+'">'+accNum+'</option>');
+                            isNew = false;
                         }
+                    }
+                    for(var j = 0 ; j < newAccounts.length; j++)
+                    {
+                        var tmp = newAccounts[j];
+                        if(tmp.toUpperCase() == accNum.toUpperCase())
+                        {
+                            isNew = false;
+                        }
+                    }
+                    if(isNew)
+                    {
+                        newAccounts.push(accNum);
+                        $("#selectmenu2").append('<option name="'+sanitize(accNum)+'" value="'+accNum+'">'+accNum+'</option>');
                     }
                 }
             }
@@ -102,7 +117,7 @@
             //
             function errorCB(err) 
             {
-                alert("Error processing SQL: "+err.code);
+                alert("Error processing SQL: "+err.code+" : "+tmpSQL);
             }
 
 
@@ -110,7 +125,7 @@
             //
             function onDeviceReady() {
                 db = window.openDatabase("Database", "1.0", "Flying Lions Database", 10485760);
-                db.transaction(queryDB, errorCB);
+                db.transaction(queryDB, errorCB, updateSuccess);
                 startup();
             }
             
@@ -120,6 +135,16 @@
                 {
                     updateAccounts();
                 });
+            }
+            
+            function replaceAll(exp, value)
+            {
+                newValue = value;
+                while(newValue.indexOf(exp) > -1)
+                {
+                    newValue = newValue.replace(exp,"_");
+                }
+                return newValue;
             }
             
             function sanitize(value)
@@ -135,25 +160,25 @@
 
             function addAccount(tmpAcc_Num, tmpBank, tmpAcc_Name)
             {
-                tmpSQL = "INSERT INTO Bank_Account (Account_Num, Bank, Acc_Name, Balance) values ('"+tmpAcc_Num+"','"+tmpBank+"','"+tmpAcc_Name+"',0)";
+                tmpSQL = "INSERT INTO Bank_Account (Account_Num, Bank, Acc_Name) VALUES ('"+tmpAcc_Num+"','"+tmpBank+"','"+tmpAcc_Name+"')";
                 db = window.openDatabase("Database", "1.0", "Flying Lions Database", 10485760);
                 //$('option[name='+tmpAcc_Num).remove();
                 db.transaction(updateDB, errorCB);
             }
 			
-			function updateAccounts() {
-				var account_num = $('select#selectmenu2').val();
-				if (account_num.length==0) {
-				alert("No account selected");
-				return;
-				}
+            function updateAccounts() {
+                    var account_num = $('select#selectmenu2').val();
+                    if (account_num.length==0) {
+                    alert("No account selected");
+                    return;
+                    }
 
-				var acc_name = $('input#acc_name').val();
-				var bank =  $('input#bank').val();
+                    var acc_name = $('input#acc_name').val();
+                    var bank =  $('input#bank').val();
 
-				//alert("accnum"+account_num+"\nacc_name:"+acc_name+"\nbank:"+bank);
-				addAccount(account_num,acc_name,bank);
-			}
+                    alert("accnum"+account_num+"\nacc_name:"+acc_name+"\nbank:"+bank);
+                    addAccount(account_num,acc_name,bank);
+            }
             
         </script>
     </head>
