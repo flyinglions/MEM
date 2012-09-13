@@ -134,7 +134,7 @@ function got_direntries() {
 	//process text...sql
 	
 	}
-        alert(tmpData);
+        //alert(tmpData);
         
         checkQueue();
 }
