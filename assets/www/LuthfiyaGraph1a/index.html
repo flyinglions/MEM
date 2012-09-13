@@ -31,18 +31,26 @@
             // Query the database
             ///
             function queryDB(tx) {
-                tx.executeSql('SELECT * FROM Bank_Account', [], bank_accountSuccess, errorCB);
-                tx.executeSql('SELECT * FROM Budget_Items', [], queryBudgetSuccess, errorCB);
                 tx.executeSql('SELECT * FROM sms', [], querySuccess, errorCB);
+                tx.executeSql('SELECT * FROM Bank_Account', [], bank_accountSuccess, errorCB);
+                //tx.executeSql('SELECT * FROM Budget_Items', [], queryBudgetSuccess, errorCB);
             }
             
             function bank_accountSuccess(tx, results)
             {
                 var len = results.rows.length;
+                var head = "";
+                if(len == 0)
+                {
+                    head = "No Data Found.";
+                }
+                
                 for (var i=0; i<len; i++)
                 {
-                    $("div h3").text(results.rows.item(i).Acc_Name+ " " + results.rows.item(i).Bank + " : "+ results.rows.item(i).Account_Num);
+                    head = head + results.rows.item(i).Acc_Name+ " " + results.rows.item(i).Bank + " : "+ results.rows.item(i).Account_Num+"<br />";
                 }
+                
+                $("div h3").html(head);
             }
             
             function queryBudgetSuccess(tx, results) {
@@ -57,13 +65,15 @@
                     Budgeted.push(1*results.rows.item(i).Budget_Amount);
                     Spent.push(0);
                 }
+                alert(Gategories);
             }
             
             function getIndexInCategory(category)
             {
                 for(var i = 0 ; i < Gategories.length; i++)
                 {
-                    if(category == Gategories[i])
+                    var tmpCat = Gategories[i];
+                    if(category.toUpperCase() == tmpCat.toUpperCase())
                     {
                         return i;
                     }
@@ -73,27 +83,52 @@
 
             // Query the success callback
             //
-            function querySuccess(tx, results) {
+            function querySuccess(tx, results) 
+            {
                 var len = results.rows.length;
                 //alert(len);
                 
                 for (var i=0; i<len; i++)
                 {
-                    var pos = getIndexInCategory(results.rows.item(i).Category);
-                    if(pos > -1)
+                    var tmpCategory = results.rows.item(i).Category;
+                    var exists = false;
+                    for(var j=0; j < Gategories.length; j++)
                     {
-                        var spentValue = results.rows.item(i).Amount;
-                        if(spentValue < 0)
+                        var thisCategory = Gategories[j];
+                        if(thisCategory.toUpperCase() == tmpCategory.toUpperCase())
                         {
-                            Spent[pos] = Spent[pos] + ((-1)*spentValue);
+                            exists = true;
                         }
                     }
-                    //INSERT INTO sms(Date,Time,Amount,Balance,Location,Account_Num,Category)
+                    
+                    if(!exists)
+                    {
+                        Gategories.push(tmpCategory);
+                        Spent.push(0);
+                        Budgeted.push(0);
+                    }
+                    
+                    //alert(tmpCategory);
+                    var value = 1*results.rows.item(i).Amount;
+                    if(value < 0)
+                    {
+                        Spent[getIndexInCategory(tmpCategory)] = 1*Spent[getIndexInCategory(tmpCategory)] - 1*results.rows.item(i).Amount;
+                    }
+                    //alert(Spent[getIndexInCategory(tmpCategory)]);
                 }
                 
-               
+                //alert(Spent);
+                if(len > 0)
+                {
+                    plotGraph();
+                }
                 
-                plot1 = $.jqplot("chart", [Spent,Budgeted], {
+                
+            }
+            
+            function plotGraph()
+            {
+                var plot1 = $.jqplot("chart", [Spent,Budgeted], {
                 title: 'Expenses per Category',
                 animate: true,
                 animateReplot: true,
@@ -176,7 +211,6 @@
                     }
                 }
                 });
-                
             }
 
             // Transaction error callback

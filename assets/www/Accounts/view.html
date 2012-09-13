@@ -56,6 +56,10 @@
             {
                 var len = results.rows.length;
                 $('<h3>List of Accounts in use</h3>').appendTo('div.data');
+                if(len == 0)
+                {
+                    $('<h5>None</h5>').appendTo('div.data');
+                }
                 for (var i=0; i<len; i++)
                 {
                     Accounts.push(results.rows.item(i).Account_Num);

@@ -17,6 +17,7 @@
         <h1>Income</h1>
       </div>
       <div data-role="content" data-theme="a" class="ReportContent">
+          <h3 class="loading">Loading data...</h3>
         <script class="code" type="text/javascript">
             document.addEventListener("deviceready", onDeviceReady, false);
             var plot1 = new Array();
@@ -81,6 +82,11 @@
                 var len = results.rows.length;
                 var output = "";
                 
+                $('h3.loading').detach();
+                if(accounts.length == 0)
+                {
+                    $('<h3>No Accounts Found.</h3>').appendTo('.ReportContent');
+                }
                 for(var j = 0 ; j < accounts.length; j++)
                 {
                     income = [0,0,0,0,0,0,0,0,0,0,0,0];
