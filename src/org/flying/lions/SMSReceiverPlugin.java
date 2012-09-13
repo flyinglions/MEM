@@ -96,6 +96,7 @@ public class SMSReceiverPlugin extends Plugin {
 		        //String smsSimulation = " Absa: SPR 9437, Gesk, 29/06/12 DIREKTE DEBIET, DEAGOSTINI-4X000500, R-253.90, Saldo R4,093.75. Hulp 0860008600; VDWALPG043";
 
 		        smsHand.parseSMS(msg.getMessageBody() + ";" + msg.getTimestampMillis());
+		        Log.d(TAG, "SUCCESS");
 		        
 				/*Date dateObj = new Date(msg.getTimestampMillis());
 				DateFormat df = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
@@ -108,6 +109,7 @@ public class SMSReceiverPlugin extends Plugin {
 			{
 		 	   	Log.e(TAG + ":sendMessage", "JSON exception");
 			}
+
 
 			// When the Activity is not loaded, the currentPluginInstance is null
 			

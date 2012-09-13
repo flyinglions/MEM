@@ -49,7 +49,9 @@ public class SMSHandler {
             if (!smsString.contains("reserved") && !tempCheck.contains("Absa") && !smsString.contains("fraud")) {
                 hardCodedFNB(inSms);
                 SQLGen.buildSQL(realValue);                
-                System.out.println("Sms valid");
+                System.out.println("Sms valid1");
+                currentLocation = 0;
+                isValid = true;
                 return;
             }
         } catch (Exception e) {
@@ -79,9 +81,17 @@ public class SMSHandler {
                 return;
             }
         }
-        System.out.println("Sms valid");
+        System.out.println("Sms valid2");
         Log.d("SMSHandler","Call smshandler");
-        SQLGen.buildSQL(realValue);
+        try
+        {
+        	SQLGen.buildSQL(realValue);
+        	Log.d("SMSHANDLER", "SUCCESS");
+        }
+        catch(Exception ex)
+        {
+        	ex.printStackTrace();
+        }
         currentLocation = 0;
         isValid = true;
 
@@ -182,3 +192,4 @@ public class SMSHandler {
     }
     
 }
+
