@@ -210,7 +210,7 @@ function fileReaderSuccess(file) {
         if (file_text.length==0) {
 		//alert("new files");
 		console.log("file empty: in process of creating new - after callback (see stopINI)"); 
-            file_text="[author]\r\nname=Pieter\r\n[categories]\r\nFood=Spar, Checkers, Pick n Pay, Piccola, Casbah, Wimpy, Spur, KFC\r\nTravel=BP, Sasol, Engen, Shell, Gautrain \r\nEntertainment=Wang, Top CD, Amazon\r\nOther=ATM\r\nTelecommunications=Vodacom, Cell C, MTN\r\n[user]";
+            file_text="[categories]\r\nFood=SPAR,Checkers,spar,PICK,pick\r\nTravel=BP, Sasol, Engen, Shell, Gautrain\r\nFuel=BP,SASOL\r\nEntertainment=Wang, Top CD, Amazon\r\nOther=ATM\r\nTelecommunications=Vodacom, Telkom, Cell C, MTN\r\ngames=WARG,Top CD\r\nATM= OTM,otm,atm,ATM\r\nGamble=cas,CAS\r\nbanktrans=BANK\r\n[user]";
 		
 		
 		
