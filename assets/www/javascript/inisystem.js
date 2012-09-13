@@ -653,7 +653,7 @@ function dir_gotFile(file) {
         } 
 		//text read
 			text_array[index]= text;
-			dir_currentfile.remove(success_delete,fail_delete);
+			//dir_currentfile.remove(success_delete,fail_delete);
 			index++;
 			file_counter++;
 			//console.log(file_counter+"BEFORE WHILE: dir_gotFile -> "+ dentries[file_counter].name);
