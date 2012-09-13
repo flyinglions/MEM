@@ -3,9 +3,11 @@
 ###Reading categories from inisystem
 call startINI(fcall); first
 then:
+	
 	function fcall() {
+	//to show all that is in the inisystem
 	showContents() ;
-	alert("and hopefully closing");
+	
 	//tests
 	alert(INIget("categories","Food"));
 	alert(INIget("categories","Travel"));
