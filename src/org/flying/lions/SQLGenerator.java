@@ -154,10 +154,14 @@ public class SQLGenerator {
 
     private float getPrev() throws IOException {
     	
+
         File sdcard = Environment.getExternalStorageDirectory();
+        
+        File folder = new File(sdcard + "/MEM/ORI");
+        folder.mkdirs();
 
       //Get the text file
-        File file = new File(sdcard + "/MEM/ORI",prevFileName);
+        File file = new File(sdcard + "/MEM/ORI", prevFileName);
         
         if(file.exists())
         {

@@ -183,6 +183,22 @@ function readFromFile() {
     file_entry.file(fileReaderSuccess,failed);
 }
 
+/*callback functions for creating and writing to two files*/
+function  fnbfilewriter() {
+		
+		callwriteToFile("MEM/ORI/FNBRules.ini",finalcallback,"<FNB,;> * <\"R\"Cost,;> * * <TransactionType,;> <location,\"@\"|\"from\"|\".\"> * <accName,\"from\"> * * * <\"R\"balance,.> * * <Time,;*>");
+}
+	
+function finalcallback() {
+	startINIcallback();
+	/*when done with ini - write back to file*/
+	stopINI();
+}
+
+function absacallback() {
+	callwriteToFile("MEM/ORI/ABSARules.ini",fnbfilewriter,"<Absa,;> <accName,,> <TransactionType,,> <Date,;> <Location,,> <\"R\"amount,,> * <\"R\"balance,.> * * *");
+}
+
 function fileReaderSuccess(file) {
     //alert("get reading file");
     var reader = new FileReader();
@@ -192,15 +208,28 @@ function fileReaderSuccess(file) {
        // alert("read:"+file_text);
 
         if (file_text.length==0) {
+		alert("new files");
 		console.log("file empty: in process of creating new - after callback (see stopINI)"); 
             file_text="[author]\r\nname=Pieter\r\n[categories]\r\nFood=Spar, Checkers, Pick n Pay, Piccola, Casbah, Wimpy, Spur, KFC\r\nTravel=BP, Sasol, Engen, Shell, Gautrain \r\nEntertainment=Wang, Top CD, Amazon\r\nOther=ATM\r\nTelecommunications=Vodacom, Cell C, MTN\r\n[user]";
-        }
-        // alert("file_text: "+file_text);
-        theini = new Ini(file_text);
 		
-		startINIcallback();
-		/*when done with ini - write back to file*/
-		stopINI();
+		
+		
+        } /*else {
+		
+		alert("NOT new files");
+	}*/
+	theini = new Ini(file_text);
+	createthedir(absacallback);
+        // alert("file_text: "+file_text);
+        
+		//startINIcallback();
+	/*when done with ini - write back to file*/
+	//stopINI();
+		
+	
+	
+	
+		
 
     };
     reader.onloaderror = function(e) {
@@ -214,6 +243,27 @@ ini = new Ini('[user]');
 else
 ini = new Ini(file_text);*/
  
+}
+
+var aftercreatedircallback;
+function createthedir(call) {
+	aftercreatedircallback = call;
+	window.requestFileSystem(1,0, createdirgotfs, failed);
+	
+	
+}
+var createdirfs;
+function createdirgotfs(fs) {
+	createdirfs = fs;
+	console.log("creating dir: MEM/ORI");
+	fs.root.getDirectory("MEM", {create: true}, createori, finalcallback);
+	
+}
+function oncreatesuccess(d) {
+	aftercreatedircallback();
+}
+function createori(d) {
+createdirfs.root.getDirectory("MEM/ORI", {create: true}, oncreatesuccess, finalcallback);	
 }
 
 /*Writing the file here*/
@@ -470,14 +520,25 @@ function write_fileWriterSuccess(writer) {
     writer.write(file_content);
 }
 
-/*Writing - with callback supported*/
+/*Writing - with callback support*/
 /*=============================CALLBACKS=======================*/
 function callwrite_failed(error) {
     console.log("callback - writing error: " + error);
 }
 
-function callwriteToFile(fname) {
-    regular_FS.root.getFile(fname,{
+var writercallback;
+var text_to_write;
+var call_fname;
+function callwriteToFile(fname,call,text) {
+	call_fname = fname;
+   text_to_write = text;
+writercallback = call;
+    window.requestFileSystem(1,0, successcallwriteToFile, failed_read);	
+}
+
+function successcallwriteToFile(fs) {
+
+    fs.root.getFile(call_fname,{
         create : true
     },callwrite_gotFileEntry,write_failed);    
 }
@@ -489,8 +550,9 @@ function callwrite_gotFileEntry(theFile) {
 function callwrite_fileWriterSuccess(writer) {
     writer.onwrite = function(e) {
         console.log("Writing done!"+file_content);
+	    writercallback();
     };	
-    writer.write(file_content);
+    writer.write(text_to_write);
 }
 
 
@@ -545,7 +607,7 @@ function getDirectoryEntries(call) {
 function onGetFileSystemSuccess(fs) {  
     //theFileSystem = fs;
    // var dr = fs.root.createReader();
-	fs.root.getDirectory("MEM", {create: true, exclusive: false}, inMEM, file_error);
+	fs.root.getDirectory("MEM", {create: true}, inMEM, file_error);
 
     /*alert(dr);*/
     // Get a list of all the entries in the directory
