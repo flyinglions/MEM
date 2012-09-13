@@ -2,7 +2,7 @@
 <html>
     <head>
         <title>
-            Account Addition
+            Account Deletion
         </title>
         <link rel="stylesheet" href="../theme/Wikus/WikusTheme.css" />
         <link rel="stylesheet" href="../theme/Wikus/jquery.mobile.structure-1.1.0.min.css" />
@@ -49,22 +49,11 @@
             ///
             function queryDB(tx) {
                 tx.executeSql('SELECT * FROM Bank_Account', [], bank_accountSuccess, errorCB);
-                tx.executeSql('SELECT * FROM sms', [], querySuccess, errorCB);
             }
             
             function updateDB(tx) 
             {
-                tx.executeSql(tmpSQL, updateSuccess, errorInsert);
-            }
-            
-            function updateSuccess(tx)
-            {
-                alert('Insert Success');
-            }
-            
-            function errorInsert(err) 
-            {
-                alert("Insert Failed");
+                tx.executeSql(tmpSQL);
             }
             
             function bank_accountSuccess(tx, results)
@@ -91,8 +80,7 @@
                         {
                             newAccounts.push(accNum);
                             //alert(results.rows.item(i).Account_Num);
-                            alert(sanitize(accNum));
-                            $("#selectmenu2").append('<option name="'+sanitize(accNum)+'" value="'+accNum+'">'+accNum+'</option>');
+                            $("#selectmenu2").append('<option value="'+accNum+'">'+accNum+'</option>');
                         }
                     }
                 }
@@ -121,37 +109,25 @@
                     updateAccounts();
                 });
             }
-            
-            function sanitize(value)
-            {
-                var newValue = value;
-                
-                newValue = replaceAll(".", newValue);
-                newValue = replaceAll("/", newValue);
-                newValue = replaceAll(" ", newValue);
-                
-                return newValue;
-            }
 
             function addAccount(tmpAcc_Num, tmpBank, tmpAcc_Name)
             {
                 tmpSQL = "INSERT INTO Bank_Account (Account_Num, Bank, Acc_Name, Balance) values ('"+tmpAcc_Num+"','"+tmpBank+"','"+tmpAcc_Name+"',0)";
                 db = window.openDatabase("Database", "1.0", "Flying Lions Database", 10485760);
-                //$('option[name='+tmpAcc_Num).remove();
                 db.transaction(updateDB, errorCB);
             }
 			
 			function updateAccounts() {
 				var account_num = $('select#selectmenu2').val();
 				if (account_num.length==0) {
-				alert("No account selected");
+				alert("No new accounts");
 				return;
 				}
 
 				var acc_name = $('input#acc_name').val();
 				var bank =  $('input#bank').val();
 
-				//alert("accnum"+account_num+"\nacc_name:"+acc_name+"\nbank:"+bank);
+				alert("accnum"+account_num+"\nacc_name:"+acc_name+"\nbank:"+bank);
 				addAccount(account_num,acc_name,bank);
 			}
             
