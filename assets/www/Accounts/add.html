@@ -142,7 +142,7 @@
             
             function replaceAll(exp, value)
             {
-                newValue = value;
+                var newValue = value;
                 while(newValue.indexOf(exp) > -1)
                 {
                     newValue = newValue.replace(exp,"_");
