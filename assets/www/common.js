@@ -125,11 +125,17 @@ function got_direntries() {
         {
 	//alert(text_array[k]);//Wikus:)
             var tmpData = text_array[k].split('\r\n');
-            for(var i = 0 ; i < tmpData.length-1; i++)
+            for(var i = 0 ; i < tmpData.length; i++)
             {
                 //alert(tmpData[i]);
-                functionQueue.enqueue(tmpData[i]);
-                typeQueue.enqueue('INSERT');
+                var statement = tmpData[i];
+                statement = statement.toUpperCase();
+                
+                if(statement.indexOf("RECON") < 0)
+                {    
+                    functionQueue.enqueue(tmpData[i]);
+                    typeQueue.enqueue('INSERT');
+                }
             }
 	//process text...sql
 	

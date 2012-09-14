@@ -56,6 +56,8 @@
         var functionQueue = new Queue();
         var typeQueue = new Queue();
         
+        var lastSql = "";
+        
         /*function onWikusDeviceReady()
         {
             db = window.openDatabase("Database", "1.0", "Flying Lions Database", 10485760);
@@ -115,24 +117,28 @@
                 var sqlVal = functionQueue.dequeue();
                 //alert(type);
                 //alert(sqlVal);
-                if(type == 'DROP')
+                lastSql = sqlVal;
+                if(sqlVal != "")
                 {
-                    //alert('Drop occured');
-                    tx.executeSql(sqlVal);
-                }
-                if(type == 'CREATE')
-                {
-                    //alert('Create occured');
-                    tx.executeSql(sqlVal);
-                }
-                if(type == 'INSERT')
-                {
-                    tx.executeSql(sqlVal);
-                    //alert(sqlVal);
+                    if(type == 'DROP')
+                    {
+                        //alert('Drop occured');
+                        tx.executeSql(sqlVal);
+                    }
+                    if(type == 'CREATE')
+                    {
+                        //alert('Create occured');
+                        tx.executeSql(sqlVal);
+                    }
+                    if(type == 'INSERT')
+                    {
+                        tx.executeSql(sqlVal);
+                        //alert(sqlVal);
+                    }
                 }
             }
             
-            alert('Data loaded succesfully!');
+            //alert('Data loaded succesfully!');
 
             global_trans = tx;
         }
@@ -141,12 +147,14 @@
         function error(err) 
         {
             console.log("Error processing SQL: "+err.code);
+            alert("Error: Last SQL : "+lastSql);
         }
 
         // Transaction success callback
         function success() 
         {
             console.log("success on database transaction.");
+            $('h3.loading').detach();
         }
     </script>
 </head>
@@ -156,7 +164,8 @@
             <div data-role="header" data-position="inline">
                 <h1>Mobile Expenditure Manager</h1>
             </div>
-            <div data-role="content" data-theme="a">
+            <div data-role="content" data-theme="a" class="menu">
+                <h3 class="loading">Loading...</h3>
                 <input class="button" type="button" value="Accounts" onclick="redirect('Accounts.html');"/><br />
                 <input class="button" type="button" data-icon="gear" value="Settings" onclick="redirect('Settings.html');" disabled="disabled"/><br />
                 <input class="button" type="button" data-icon="grid" value="Reports" onclick="redirect('graphMenu.html')"/><br />

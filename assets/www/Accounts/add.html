@@ -55,9 +55,12 @@
             function updateDB(tx) 
             {
                 //tmpSQL = "INSERT INTO Bank_Account (Account_Num, Bank, Acc_Name, Balance) VALUES ('SPR 1000','ABSA','Petrus van Der walt',0)";
-                alert(tmpSQL);
+                //alert(tmpSQL);
                 tx.executeSql(tmpSQL);
                 alert("Account added successfully!");
+                $('select#selectmenu2').val("");
+                $('#bank').val("");
+                $('#acc_name').val("");
             }
             
             function updateSuccess()
@@ -161,6 +164,7 @@
             function addAccount(tmpAcc_Num, tmpBank, tmpAcc_Name)
             {
                 tmpSQL = "INSERT INTO Bank_Account (Account_Num, Bank, Acc_Name) VALUES ('"+tmpAcc_Num+"','"+tmpBank+"','"+tmpAcc_Name+"')";
+                $('option[name="'+sanitize(tmpAcc_Num)+'"]').detach();
                 db = window.openDatabase("Database", "1.0", "Flying Lions Database", 10485760);
                 //$('option[name='+tmpAcc_Num).remove();
                 db.transaction(updateDB, errorCB);
@@ -176,8 +180,8 @@
                     var acc_name = $('input#acc_name').val();
                     var bank =  $('input#bank').val();
 
-                    alert("accnum"+account_num+"\nacc_name:"+acc_name+"\nbank:"+bank);
-                    addAccount(account_num,acc_name,bank);
+                    //alert("accnum"+account_num+"\nacc_name:"+acc_name+"\nbank:"+bank);
+                    addAccount(account_num,bank,acc_name);
             }
             
         </script>
@@ -210,7 +214,8 @@
 				<input id="acc_name" placeholder="" value="" type="text">
 			</fieldset>
 		</div>
-		<input class="update" value="Update" type="submit">
+		<input class="update" value="Update" type="submit"><br />
+                <input class="button" type="button" value="Back" onclick="redirect('../Accounts.html');"/><br />
 	</div>
 </div>
 
