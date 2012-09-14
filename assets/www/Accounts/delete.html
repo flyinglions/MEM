@@ -67,9 +67,11 @@
                 var len = results.rows.length;
                 for (var i=0; i<len; i++)
                 {
+                    //alert(results.rows.item(i).Account_Num);
                     Accounts.push(results.rows.item(i).Account_Num);
                     Bank.push(results.rows.item(i).Bank);
                     Acc_Name.push(results.rows.item(i).Acc_Name);
+                    $("#selectmenu2").append('<option name="'+sanitize(results.rows.item(i).Account_Num)+'" value="'+results.rows.item(i).Account_Num+'">'+results.rows.item(i).Account_Num+'</option>');
                 }
             }
 
@@ -82,7 +84,8 @@
                 for (var i=0; i<len; i++)
                 {
                     var accNum = results.rows.item(i).Account_Num;
-                    $("#selectmenu2").append('<option name="'+sanitize(accNum)+'" value="'+accNum+'">'+accNum+'</option>');
+                    //$("#selectmenu2").append('<option name="'+sanitize(accNum)+'" value="'+accNum+'">'+accNum+'</option>');
+                    alert(accNum);
                     if(Accounts.indexOf(accNum) < 0)
                     {
                         if(newAccounts.indexOf(accNum) < 0)
@@ -107,7 +110,7 @@
             //
             function onDeviceReady() {
                 db = window.openDatabase("Database", "1.0", "Flying Lions Database", 10485760);
-                db.transaction(queryDB, errorCB, updateSuccess);
+                db.transaction(queryDB, errorCB);
                 startup();
             }
             
@@ -161,12 +164,13 @@
                 db.transaction(deleteDB, errorCB);
             }
 			
-			function updateAccounts() {
+			function deleteAccounts() {
 				var account_num = $('select#selectmenu2').val();
 				if (account_num.length==0) {
 				alert("No new accounts");
 				return;
 				}
+                                
 				deleteAccount(account_num);
 			}
             
